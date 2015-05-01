@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		4D8B923D1AF2F4B600A64CCC /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D8B923C1AF2F4B600A64CCC /* main.cpp */; };
+		4D8B92461AF2F51000A64CCC /* pathfind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D8B92431AF2F51000A64CCC /* pathfind.cpp */; };
+		4D8B92471AF2F51000A64CCC /* simulation.h in Sources */ = {isa = PBXBuildFile; fileRef = 4D8B92441AF2F51000A64CCC /* simulation.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +27,9 @@
 /* Begin PBXFileReference section */
 		4D8B92391AF2F4B600A64CCC /* MazeRunner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MazeRunner; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D8B923C1AF2F4B600A64CCC /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		4D8B92431AF2F51000A64CCC /* pathfind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pathfind.cpp; sourceTree = "<group>"; };
+		4D8B92441AF2F51000A64CCC /* simulation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = simulation.h; sourceTree = "<group>"; };
+		4D8B92451AF2F51000A64CCC /* pathfind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pathfind.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +63,9 @@
 			isa = PBXGroup;
 			children = (
 				4D8B923C1AF2F4B600A64CCC /* main.cpp */,
+				4D8B92431AF2F51000A64CCC /* pathfind.cpp */,
+				4D8B92441AF2F51000A64CCC /* simulation.h */,
+				4D8B92451AF2F51000A64CCC /* pathfind.h */,
 			);
 			path = MazeRunner;
 			sourceTree = "<group>";
@@ -119,6 +127,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				4D8B923D1AF2F4B600A64CCC /* main.cpp in Sources */,
+				4D8B92461AF2F51000A64CCC /* pathfind.cpp in Sources */,
+				4D8B92471AF2F51000A64CCC /* simulation.h in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -235,6 +245,7 @@
 				4D8B92421AF2F4B600A64CCC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
