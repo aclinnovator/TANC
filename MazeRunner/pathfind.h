@@ -40,7 +40,9 @@
 #define MAZE_WIDTH            5
 #define SQUARE_SIZE_INCH      1
 
-#define INTERSQUARE_SPACE     1
+
+#define INTERSQUARE_SPACE     0
+
 
 #if IS_BLOCKS
 
@@ -77,20 +79,27 @@
 #define WALL                  1
 #define FLOOR                 0
 //----
-#define EXPLORED              1
-#define UNEXPLORED            2
+#define UNEXPLORED            1
+#define EXPLORED              2
 #define DEAD_END              3
 
+
+/*--( Unexplored )------*/
+#define    UNEXPLORED_CLOSE_SHORT    1
+#define    UNEXPLORED_CLOSE_LONG     2
+#define    UNEXPLORED_FAR_SHORT      3
+#define    UNEXPLORED_FAR_LONG       4
+
 /*-- ( Explored )------*/
-#define    EXPLORED_CLOSE_SHORT      1
-#define    EXPLORED_CLOSE_LONG       2
-#define    EXPLORED_FAR_SHORT        3
-#define    EXPLORED_FAR_LONG         4
- /*--( Unexplored )------*/
-#define    UNEXPLORED_CLOSE_SHORT    5
-#define    UNEXPLORED_CLOSE_LONG     6
-#define    UNEXPLORED_FAR_SHORT      7
-#define    UNEXPLORED_FAR_LONG       8
+#define    EXPLORED_CLOSE_SHORT      5
+#define    EXPLORED_CLOSE_LONG       6
+#define    EXPLORED_FAR_SHORT        7
+#define    EXPLORED_FAR_LONG         8
+
+#define POINT_REACHABLE              1
+#define POINT_UNREACHABLE            2
+
+
 
 #define EVEN                         1
 #define ODD                          2
@@ -102,10 +111,10 @@
 #define inBound(val, min, max) ((val >= min) && (val <= max) ? 1 : 0)
 //----
 #define inBoundsX(x) inBound(x, 0, MAZE_WIDTH)
-#define inBoundsY(x) inBound(y, 0, MAZE_WIDTH)
+#define inBoundsY(x) inBound(y, 0, MAZE_HEIGHT)
 //----
 #define inBoundsIndX(x) inBound(x, 0, MAZE_WIDTH - 1)
-#define inBoundsIndY(y) inBound(y, 0, MAZE_WIDTH - 1)
+#define inBoundsIndY(y) inBound(y, 0, MAZE_HEIGHT - 1)
 #define oddOrEven(n) ((n % 2) == 0)
 
 #define getAxis(direction) \
@@ -150,6 +159,7 @@ typedef struct Vec4f {
 typedef Bool (*PointFunction)(Point, Point);
 
 //############# Function Declarations ############
+void printPoint(Point pt);
 
 /*-------( Math functions )-------*/
 int cut(int n, int mag, int _min, int _max);
@@ -212,7 +222,7 @@ Bool stopAtWall(Point start, Point current);
 int relationship(int a, int b);
 int comparePathOptions(int n_length, int n_closeness, int n_explored,
                  int b_length, int b_closeness, int b_explored);
-Vec4 rateDirections(Point _curr_pos);
+int  bestDirection(Point _curr_pos);
 Point where_the_hech_should_I_go();
 //Right now we are assuming next location is on the same x or x
 //as the car. When car is surrounded completely by explored locations, it should make nextlocation the closest unexplored location. When that happens, we need to figure out what to do.
@@ -220,4 +230,5 @@ Point one_square_closer_to_next_location(Point _curr_pos, Point next_location);
 
 /*-------( API )-------*/
 Point pathfind_update(Point _curr_pos, Vec4f measurements);
-void pathfind_init(Point start);
+void pathfind_init(Point start, Point heading);
+void pathfind_print(void);

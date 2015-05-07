@@ -29,6 +29,7 @@ MazeSquare history[_MAZE_WIDTH][_MAZE_HEIGHT];
 
 
 
+
 #if IS_BLOCKS
 
 /*
@@ -48,7 +49,7 @@ MazeSquare history[_MAZE_WIDTH][_MAZE_HEIGHT];
 
         5 * 5 = 25in^2
  */
-
+void printPoint(Point pt){ printf("x: %d, y: %d\n",pt.x, pt.y); }
 Point pointToArrayIndex(Point p){
     return cutToMazeBounds( p );
 }
@@ -180,7 +181,7 @@ int absv(int n){
 }
 
 Point Vec(int x, int y){
-  Point p = {x, y};
+    Point p; p.x = x; p.y = y;
   return p;
 }
 
@@ -228,8 +229,33 @@ Point translateOnAxisInDirection(Point start, int dir, int magnitude){
 
     if      (axis == X_AXIS) { start.x += (magnitude * axial_direction); }
     else if (axis == Y_AXIS) { start.y += (magnitude * axial_direction); }
-
+    start = start; //pointToReachableSquare(start, dir);
     return start;
+}
+
+Vec4 collectDistancesToWalls(){
+    Vec4 measurements;
+    measurements[0] = 0;
+    measurements[1] = 0;
+    measurements[2] = 0;
+    measurements[3] = 0;
+    
+    for(int i = 0; i < 4; i++){
+        Bool hit_wall = false;
+        Point checker = Vec(location.x,location.y);
+        while(hit_wall == false){
+            checker = translateOnAxisInDirection(checker, i, 1);
+            //checking for out of bounds
+            if(!pointInIndBounds(checker)){
+                hit_wall = true;
+            } else if(history[checker.x][checker.y].classification == WALL){
+                hit_wall = true;
+            } else {
+                measurements[i] = measurements[i]+1;
+            }
+        }
+    }
+    return measurements;
 }
 
 Point axialMagnitudeNormalized(Point a, Point b){
@@ -252,8 +278,8 @@ int pointsOnAxisInDirectionUntil(
 }
 
 int wallOrFloor(float mes){
-    printf("Measurement:%f, Square Size:%d\n",mes, SQUARE_SIZE_INCH);
-    return (mes > SQUARE_SIZE_INCH ? FLOOR : WALL);
+//    printf("Measurement:%f, Square Size:%d\n",mes, SQUARE_SIZE_INCH);
+    return (mes >= SQUARE_SIZE_INCH ? FLOOR : WALL);
 }
 
 Vec4 classifyMeasurements(Vec4f mesments){
@@ -286,7 +312,7 @@ Bool storeClassification(Point p, int classification) {
 
 Bool storeStatus(Point p, int status){
     p = cutToMazeBounds(p);
-    if (inBound(status,EXPLORED,DEAD_END)){
+    if (inBound(status,UNEXPLORED,DEAD_END)){
         history[p.x][p.y].status = status;
         return true;
     }
@@ -305,12 +331,15 @@ int relationship(int a, int b){
     return EQUAL;
 }
 
-int comparePathOptions(int n_length, int n_closeness, int n_explored,
-                 int b_length, int b_closeness, int b_explored){
+//Edit this function
+//TODO: Edit comparePathOptions.
+//NOTE: Something
+int comparePathOptions(int n_explored, int n_closeness, int n_length,
+                 int b_explored, int b_closeness, int b_length){
 
     int objs[][3] = {
-        {n_explored, n_length, n_closeness},
-        {b_explored, b_length, b_closeness}
+        {n_explored, n_closeness, n_length},
+        {b_explored, b_closeness, b_length}
     };
 
     for (int i = 0; i < 3; i++){
@@ -323,17 +352,28 @@ int comparePathOptions(int n_length, int n_closeness, int n_explored,
 
 //It is very important to edit this
 
-Vec4 rateDirections(Point _curr_pos){
-    Vec4 lengths, distances, statuses, directions = {0,1,2,3};
+int  bestDirection(Point _curr_pos){
+    Vec4 statuses,
+        distances ,
+        lengths = collectDistancesToWalls(),
+        availablities = {POINT_REACHABLE, POINT_REACHABLE, POINT_REACHABLE, POINT_REACHABLE},
+        directions = {0,1,2,3};
 
     //Give directions a length rating and distance rating and then sorts the directions, leaving the best direction in the front.
 
     //If we discover that we have already been in a location, we should block off the passage behind us leading to that location because it must be a loop.
     for (int i=0; i < 4; i++) {
-        distances[i]    = 1;//pointsOnAxisInDirectionUntil(location, stopAtWall, i);
-        Point heading_direction = pointToReachableSquare( translateOnAxisInDirection(_curr_pos, i,1),i ); //getVec(location, headingLocation);
-        lengths[i]      = min(heading_direction.x, heading_direction.y);
-        statuses[i]     = history[heading_direction.x][heading_direction.y].status;
+        Point direction_translated = translateOnAxisInDirection(_curr_pos, i, 1);
+        Point heading_direction = pointToReachableSquare(direction_translated , i);
+        
+        Point vec_to_end = subVec(heading_direction, headingLocation);
+        //if the path does not exist, then delete it - mark as DEAD_END
+        distances[i]    =  absv(min(vec_to_end.x, vec_to_end.y));
+        statuses[i]     =  history[heading_direction.x][heading_direction.y].status;
+        
+        if (cmpVec(heading_direction, _curr_pos) || history[heading_direction.x][heading_direction.y].classification == WALL || !pointInIndBounds(direction_translated)) {
+            availablities[i] = POINT_UNREACHABLE;
+        }
     }
 
     int j, temp;
@@ -350,15 +390,23 @@ Vec4 rateDirections(Point _curr_pos){
             statuses[i],
             distances[i],
             lengths[i]
-               ) == LESS_THAN && (j >= 0)) {
+               ) == MORE_THAN && (j >= 0)) {
 
                 directions[j + 1] = directions[j];
                 j = j - 1;
         }
         directions[j + 1] = temp;
     }
+    int ind = 0;
 
-    return directions;
+    int dir = directions[ind];
+
+    while (availablities[ directions[ind] ] == POINT_UNREACHABLE && (ind<4)) {
+        dir = directions[ind+1];
+        ind++;
+    }
+    
+    return dir;
 }
 
 Point one_square_closer_to_next_location(Point _curr_pos, Point next_location){
@@ -370,11 +418,12 @@ Point one_square_closer_to_next_location(Point _curr_pos, Point next_location){
 
 Point where_the_hech_should_I_go(Point whereIAmLocated){
     Point loc = whereIAmLocated;
-    Vec4 distances = rateDirections(loc);
+    int best_dir = bestDirection(loc);
     
-    Point to_go = pointToReachableSquare( translateOnAxisInDirection(location, distances[0], 1), distances[0] );//pointsOnAxisInDirectionUntil(location, stopAtWall, distances[0]);
+    Point to_go = pointToReachableSquare( translateOnAxisInDirection(location, best_dir, 1), best_dir );
     return to_go;
 }
+
 
 void save(Point currPos, Vec4f ultraSonicData){
     prevLocation = location;
@@ -383,35 +432,39 @@ void save(Point currPos, Vec4f ultraSonicData){
     storeStatus(currPos, EXPLORED);
 
     Vec4 classifications = classifyMeasurements(ultraSonicData);
-    printf("Classifications\n");
-    for(int i=0;i<4;i++) { printf("%d:",classifications[i]); }
-    printf("\n------\n");
+    printf("Measurements\n");
+    printf(" %d \n",(int)ultraSonicData[0]);
+    printf("%d %d\n",(int)ultraSonicData[3], (int)ultraSonicData[1]);
+    printf(" %d",(int)ultraSonicData[2]);
     
+    
+    printf("\n------\nLocation: ");
+    printPoint(location);
+    printf("\n");
     
     
     Point position;
     for (int i = 0; i < 4; i++){
         position = cutToMazeBounds( translateOnAxisInDirection(location, i, 1) );
-        printf("Position: %d, %d\n",position.x, position.y);
-        if (classifications[i] == WALL){
+        if (classifications[i] == WALL && !cmpVec(location, position)){
+            /*if car is in corner, pos. will be cut to its position*/
             storeClassification(position, WALL);
         } else if (classifications[i] == FLOOR){
             int doUntil = floorsIlluminatedByMeasurement(ultraSonicData[i]);
 
             for(int j = 1; j <= doUntil; j++){
-                storeClassification(
-                                    translateOnAxisInDirection(location, i, j),
-                                    FLOOR );
+                Point store_loc = translateOnAxisInDirection(location, i, j);
+                storeClassification(store_loc, FLOOR );
             }
         }
     }
-    
 }
 
 Point pathfind_update(Point _curr_pos, Vec4f measurements){
 
   save(_curr_pos, measurements);
-  
+  pathfind_print();
+
     
   if (cmpVec(_curr_pos, nextLocation)){
      nextLocation = where_the_hech_should_I_go(_curr_pos);
@@ -423,16 +476,47 @@ Point pathfind_update(Point _curr_pos, Vec4f measurements){
     
 }
 
-void pathfind_init(Point start){
+void pathfind_init(Point start, Point heading){
     printf("H: %d, W:%d, Ss:%d\n", MAZE_HEIGHT, MAZE_WIDTH, SQUARE_SIZE_INCH);
 
   location = start;
   nextLocation = location;
+  headingLocation = heading;
   for (int i=0; i < _MAZE_WIDTH; i++){
     for(int j=0; j < _MAZE_HEIGHT; j++){
       Point p = Vec(i, j);
-      storeClassification(p, FLOOR);
+      storeClassification(p, WALL);
       storeStatus(p, UNEXPLORED);
     }
   }
+    storeClassification(location, FLOOR);
+    storeStatus(location, EXPLORED);
+}
+
+#define CAR_C '*'
+#define WALL_C '#'
+#define FLOOR_C ' '
+#define UNEX_C  'X'
+
+void pathfind_print(void){
+    
+    for(int height = MAZE_HEIGHT -1; height >= 0;height--){
+        printf("%d|",height);
+        for(int width = 0; width < MAZE_WIDTH; width++){
+            
+            if (cmpVec(Vec(width,height), location)) {
+                printf("%c",CAR_C);
+            } else if(1){ //(history[width][height].status == EXPLORED){
+                if (history[width][height].classification == FLOOR) {
+                    printf("%c",FLOOR_C);
+                } else {
+                    printf("%c",WALL_C);
+                }
+            } /*else if(history[width][height].classification == WALL){
+                printf("%c",WALL_C);
+            }*/
+        }
+        printf("|\n");
+    }
+    printf("  01234 \n");
 }
