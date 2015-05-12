@@ -5,8 +5,6 @@ void printVec4f(Vec4f _vec){
   for(int i = 0; i < 4; i++) { printf("%f\n",_vec[i]); }
 }
 
-
-
 /*
         #---#---#---#---#---#
     5   |   |   |   |   |   |
@@ -24,45 +22,19 @@ void printVec4f(Vec4f _vec){
 */
 
 #define START_POS Vec(0,0)
-#define HEADING Vec(4,0)
+#define HEADING Vec(4,4)
 
 
 int maze[MAZE_WIDTH][MAZE_HEIGHT] = {
-    { 0 , 0 , 0 , 0 , 0 },
-    { 1 , 1 , 1 , 1 , 0 },
-    { 1 , 1 , 1 , 1 , 0 },
-    { 1 , 1 , 1 , 1 , 0 },
-    { 0 , 0 , 0 , 0 , 0 }
+    { 0 , 0 , 0 , 0 , 1 },
+    { 1 , 0 , 0 , 1 , 0 },
+    { 1 , 0 , 1 , 0 , 0 },
+    { 1 , 0 , 0,  0 , 1 },
+    { 1 , 0 , 0 , 0 , 0 }
 };
 
 //Gershon's phone number: 551-795-9634
 
-Point pts[] = {
-    Vec(0,0),
-    Vec(0,1),
-    Vec(0,2),
-    Vec(0,3),
-    Vec(0,4),
-    Vec(1,4),
-    Vec(2,4),
-    Vec(3,4),
-    Vec(4,4),
-    Vec(4,3),
-    Vec(4,2),
-    Vec(4,1),
-    Vec(4,0)
-};
-
-//int maze[MAZE_WIDTH][MAZE_HEIGHT] = {
-//    { 0 },
-//    { 0 },
-//    { 0 },
-//    { 0 },
-//    { 0 }
-//};
-
-
-int currPt = 0;
 Point currentPosition;
 
 
@@ -112,10 +84,11 @@ void runSimulation(){
     do{
     
     Vec4f measurements = collectMeasurements();
-    currPt++;
     currentPosition = pathfind_update(currentPosition, measurements);
            
     } while(!cmpVec(currentPosition, HEADING));
+    pathfind_finish();
+    pathfind_print();
 
 }
 

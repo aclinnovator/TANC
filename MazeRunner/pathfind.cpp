@@ -201,7 +201,6 @@ Point ceilVec(Point vec){
 Point addVec(Point a, Point b){
     a.x += b.x;
     a.y += b.y;
-
     return a;
 }
 
@@ -210,6 +209,14 @@ Point subVec(Point a, Point b){
     b.y -= a.y;
 
     return b;
+}
+
+Point multVec(Point a, Point b){
+    return Vec(a.x * b.x, a.y * b.y);
+}
+
+Point perpVec(Point a, Point b){
+    return multVec(getVec(a,b), Vec(1,-1));
 }
 
 Point absVec(Point p){
@@ -325,6 +332,12 @@ Bool stopAtWall(Point start, Point current){
     return ret;
 }
 
+Bool stopAtPerpendicularPassage(Point start, Point current) {
+    Point perpA, perpB;
+    Bool ret = history[current.x][current.y].classification == WALL ? true : false;
+    return ret;
+}
+
 int relationship(int a, int b){
     if (a < b) return LESS_THAN;
     if (a > b) return MORE_THAN;
@@ -343,8 +356,8 @@ int comparePathOptions(int n_explored, int n_closeness, int n_length,
     };
 
     for (int i = 0; i < 3; i++){
-        int rel = relationship(objs[0][i],objs[1][i]);
-        if ((rel == MORE_THAN )||(rel == LESS_THAN) ) return rel;
+        int rel = relationship(objs[1][i],objs[0][i]);
+        if (rel!= EQUAL ) return rel;
 
     }
     return EQUAL;
@@ -352,61 +365,94 @@ int comparePathOptions(int n_explored, int n_closeness, int n_length,
 
 //It is very important to edit this
 
-int  bestDirection(Point _curr_pos){
+Point  getDesLocation(Point _curr_pos){
+#define TRANS(dir) translateOnAxisInDirection(_curr_pos, dir, 1)
+
     Vec4 statuses,
         distances ,
         lengths = collectDistancesToWalls(),
         availablities = {POINT_REACHABLE, POINT_REACHABLE, POINT_REACHABLE, POINT_REACHABLE},
         directions = {0,1,2,3};
+    
+    //The points in all four directions
+        Point n = TRANS(0),
+        s = TRANS(2),
+        w = TRANS(3),
+        e = TRANS(1);
+    //For easy access by index
+    Point *pts[] = {&n, &e, &s, &w};
 
     //Give directions a length rating and distance rating and then sorts the directions, leaving the best direction in the front.
-
     //If we discover that we have already been in a location, we should block off the passage behind us leading to that location because it must be a loop.
+    
+    //Collect data for each direction:
     for (int i=0; i < 4; i++) {
-        Point direction_translated = translateOnAxisInDirection(_curr_pos, i, 1);
+        Point direction_translated = *pts[i];
         Point heading_direction = pointToReachableSquare(direction_translated , i);
         
         Point vec_to_end = subVec(heading_direction, headingLocation);
         //if the path does not exist, then delete it - mark as DEAD_END
-        distances[i]    =  absv(min(vec_to_end.x, vec_to_end.y));
+        distances[i]    =  min(absv(vec_to_end.x), absv(vec_to_end.y));
         statuses[i]     =  history[heading_direction.x][heading_direction.y].status;
         
         if (cmpVec(heading_direction, _curr_pos) || history[heading_direction.x][heading_direction.y].classification == WALL || !pointInIndBounds(direction_translated)) {
             availablities[i] = POINT_UNREACHABLE;
         }
     }
+    
+    Bool surrounded_by_explored =
+        history[n.x][n.y].status == EXPLORED   &&
+        history[s.x][s.y].status == EXPLORED   &&
+        history[w.x][w.y].status == EXPLORED   &&
+        history[e.x][e.y].status == EXPLORED;
 
-    int j, temp;
-
+    int num_pass_available = 0;
+        num_pass_available += history[n.x][n.y].classification == WALL;
+        num_pass_available += history[s.x][s.y].classification == WALL;
+        num_pass_available += history[w.x][w.y].classification == WALL;
+        num_pass_available += history[e.x][e.y].classification == WALL;
+    
+    Bool hit_dead_end = num_pass_available == 3;
+    
+    //If we have explored in every direction,
+    //then find the nearest unexplored postion,
+    //and set it as deslocation
+    if (surrounded_by_explored) {
+        
+    } else if (hit_dead_end){
+        
+    }
+    //Normal circumstances
     //Insertion sort the distances.
     for (int i = 1; i < 4; i++) {
-        temp = directions[i];
-        j = i - 1;
-        while (
-            comparePathOptions(
-            statuses[j],
-            distances[j],
-            lengths[j],
-            statuses[i],
-            distances[i],
-            lengths[i]
-               ) == MORE_THAN && (j >= 0)) {
-
-                directions[j + 1] = directions[j];
-                j = j - 1;
-        }
-        directions[j + 1] = temp;
+        int j = i - 1;
+        while ( (j >= 0) &&
+               comparePathOptions(
+                                  statuses[  directions[i] ],
+                                  distances[ directions[i] ],
+                                  lengths[   directions[i] ],
+                                  statuses[  directions[j] ],
+                                  distances[ directions[j] ],
+                                  lengths[   directions[j] ]
+                                  ) == MORE_THAN ) {
+                   int temp = directions[i];
+                   directions[i] = directions[j];
+                   directions[j] = temp;
+                   j--;
+               }
     }
+    //Get the first available endpoint
     int ind = 0;
-
     int dir = directions[ind];
-
     while (availablities[ directions[ind] ] == POINT_UNREACHABLE && (ind<4)) {
         dir = directions[ind+1];
         ind++;
     }
-    
-    return dir;
+    return TRANS(dir);
+
+
+
+#undef TRANS
 }
 
 Point one_square_closer_to_next_location(Point _curr_pos, Point next_location){
@@ -418,10 +464,10 @@ Point one_square_closer_to_next_location(Point _curr_pos, Point next_location){
 
 Point where_the_hech_should_I_go(Point whereIAmLocated){
     Point loc = whereIAmLocated;
-    int best_dir = bestDirection(loc);
+    Point best_loc = getDesLocation(loc);
     
-    Point to_go = pointToReachableSquare( translateOnAxisInDirection(location, best_dir, 1), best_dir );
-    return to_go;
+//    Point to_go = pointToReachableSquare( translateOnAxisInDirection(location, best_dir, 1), best_dir );
+    return best_loc;
 }
 
 
@@ -432,16 +478,6 @@ void save(Point currPos, Vec4f ultraSonicData){
     storeStatus(currPos, EXPLORED);
 
     Vec4 classifications = classifyMeasurements(ultraSonicData);
-    printf("Measurements\n");
-    printf(" %d \n",(int)ultraSonicData[0]);
-    printf("%d %d\n",(int)ultraSonicData[3], (int)ultraSonicData[1]);
-    printf(" %d",(int)ultraSonicData[2]);
-    
-    
-    printf("\n------\nLocation: ");
-    printPoint(location);
-    printf("\n");
-    
     
     Point position;
     for (int i = 0; i < 4; i++){
@@ -493,10 +529,14 @@ void pathfind_init(Point start, Point heading){
     storeStatus(location, EXPLORED);
 }
 
+void pathfind_finish(){
+    location = headingLocation;
+}
+
 #define CAR_C '*'
 #define WALL_C '#'
 #define FLOOR_C ' '
-#define UNEX_C  'X'
+#define UNEX_C  ':'
 
 void pathfind_print(void){
     
@@ -506,15 +546,24 @@ void pathfind_print(void){
             
             if (cmpVec(Vec(width,height), location)) {
                 printf("%c",CAR_C);
-            } else if(1){ //(history[width][height].status == EXPLORED){
+            } else if(history[width][height].status == UNEXPLORED){
+                
+                switch (history[width][height].classification) {
+                    case FLOOR:
+                        printf("%c",UNEX_C);
+                        break;
+                    case WALL:
+                        printf("%c",WALL_C);
+                    default:
+                        break;
+                }
+            }else if(history[width][height].status == EXPLORED){
                 if (history[width][height].classification == FLOOR) {
                     printf("%c",FLOOR_C);
                 } else {
                     printf("%c",WALL_C);
                 }
-            } /*else if(history[width][height].classification == WALL){
-                printf("%c",WALL_C);
-            }*/
+            }
         }
         printf("|\n");
     }

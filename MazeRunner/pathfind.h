@@ -13,7 +13,6 @@
  */
 
  #ifdef __APPLE__
-
  #include <stdlib.h>
  #include <stdio.h>
  #include <math.h>
@@ -191,6 +190,10 @@ Point addVec(Point a, Point b);
 
 Point subVec(Point a, Point b);
 
+Point multVec(Point a, Point b);
+
+Point perpVec(Point a, Point b);
+
 Point absVec(Point a);
 
 /*--------( Axis related functions )-------*/
@@ -219,10 +222,11 @@ Bool storeStatus(Point p, int status);
 void save(Point currPos, Vec4 ultraSonicData);
 /*-------( Core Algorithm)-------*/
 Bool stopAtWall(Point start, Point current);
+Bool stopAtPerpendicularPassage(Point start, Point current);
 int relationship(int a, int b);
 int comparePathOptions(int n_length, int n_closeness, int n_explored,
                  int b_length, int b_closeness, int b_explored);
-int  bestDirection(Point _curr_pos);
+Point  getDesLocation(Point _curr_pos);
 Point where_the_hech_should_I_go();
 //Right now we are assuming next location is on the same x or x
 //as the car. When car is surrounded completely by explored locations, it should make nextlocation the closest unexplored location. When that happens, we need to figure out what to do.
@@ -232,3 +236,5 @@ Point one_square_closer_to_next_location(Point _curr_pos, Point next_location);
 Point pathfind_update(Point _curr_pos, Vec4f measurements);
 void pathfind_init(Point start, Point heading);
 void pathfind_print(void);
+void pathfind_finish();
+
