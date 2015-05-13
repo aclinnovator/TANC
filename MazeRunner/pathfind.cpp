@@ -9,6 +9,7 @@
 #include "pathfind.h"
 #ifdef __APPLE__
 #include <stdio.h>
+void printPoint(Point pt){ printf("x: %d, y: %d\n",pt.x, pt.y); }
 //Because stupid math.h had to give min() and max()
 //wierd names.
 #define min(n,b) (fmin(n,b))
@@ -25,9 +26,9 @@ Point nextLocation;
 //Maze endpoint
 Point headingLocation;
 
+//Sometime make this a const, and use a conditionally expanding macro
+//to populate it, so you will use less memory?
 MazeSquare history[_MAZE_WIDTH][_MAZE_HEIGHT];
-
-
 
 
 #if IS_BLOCKS
@@ -49,7 +50,6 @@ MazeSquare history[_MAZE_WIDTH][_MAZE_HEIGHT];
 
         5 * 5 = 25in^2
  */
-void printPoint(Point pt){ printf("x: %d, y: %d\n",pt.x, pt.y); }
 Point pointToArrayIndex(Point p){
     return cutToMazeBounds( p );
 }
@@ -152,82 +152,10 @@ void storeClassificationFloor(Point p){
 int pointInIndBounds(Point p)
 { return inBoundsIndX(p.x) && inBoundsIndY(p.y); }
 
-int cut(int n, int mag, int _min, int _max){
-    int res;
-
-#ifdef __APPLE__
-    if (!inBound(n, _min, _max)) {
-
-//        printf("%d out of bounds for %d and %d\n",n,_min,_max);
-//        exit(1);
-    }
-#endif
-
-    if       (n+mag < _min){ res =  _min; }
-    else if  (n+mag > _max){ res = _max;  }
-    else                   { res =  n  + mag; }
-
-    return res;
-}
-
 Point cutToMazeBounds(Point n){
     n.x = cut(n.x, 0, 0, _MAZE_WIDTH -1);
     n.y = cut(n.y, 0, 0, _MAZE_HEIGHT-1);
     return n;
-}
-
-int absv(int n){
-    return (n < 0 ? -n : n);
-}
-
-Point Vec(int x, int y){
-    Point p; p.x = x; p.y = y;
-  return p;
-}
-
-Point getVec(Point a, Point b){
-    return subVec(a, b);
-}
-
-Point ceilVec(Point vec){
-    int absX = absv(vec.x);
-    int absY = absv(vec.y);
-    if (absX != 0)vec.x /= absX;
-    if (absY != 0)vec.y /= absY;
-
-    return vec;
-}
-
-Point addVec(Point a, Point b){
-    a.x += b.x;
-    a.y += b.y;
-    return a;
-}
-
-Point subVec(Point a, Point b){
-    b.x -= a.x;
-    b.y -= a.y;
-
-    return b;
-}
-
-Point multVec(Point a, Point b){
-    return Vec(a.x * b.x, a.y * b.y);
-}
-
-Point perpVec(Point a, Point b){
-    return multVec(getVec(a,b), Vec(1,-1));
-}
-
-Point absVec(Point p){
-    p.x = absv(p.x);
-    p.y = absv(p.y);
-    return p;
-}
-
-Bool cmpVec(Point n, Point l){
-  Bool a = n.x == l.x, b = n.y == l.y;
-  return a && b;
 }
 
 Point translateOnAxisInDirection(Point start, int dir, int magnitude){
@@ -255,7 +183,7 @@ Vec4 collectDistancesToWalls(){
             //checking for out of bounds
             if(!pointInIndBounds(checker)){
                 hit_wall = true;
-            } else if(history[checker.x][checker.y].classification == WALL){
+            } else if(classification(checker) == WALL){
                 hit_wall = true;
             } else {
                 measurements[i] = measurements[i]+1;
@@ -284,8 +212,13 @@ int pointsOnAxisInDirectionUntil(
 
 }
 
+Point nearestPointThatSatisfies(Point start, PointFunction checker) {
+    Point ret = Vec(start.x, start.y);
+    return ret;
+}
+
+
 int wallOrFloor(float mes){
-//    printf("Measurement:%f, Square Size:%d\n",mes, SQUARE_SIZE_INCH);
     return (mes >= SQUARE_SIZE_INCH ? FLOOR : WALL);
 }
 
@@ -326,15 +259,27 @@ Bool storeStatus(Point p, int status){
     return false;
 }
 
+int classification(Point p) {
+    p = cutToMazeBounds(p);
+    return history[p.x][p.y].classification;
+}
+
+int status(Point p){
+    p = cutToMazeBounds(p);
+    return history[p.x][p.y].status;
+}
+
 Bool stopAtWall(Point start, Point current){
     //Will we need to check for explored or unexplored.
-    Bool ret = history[current.x][current.y].classification == WALL ? true : false;
+    Bool ret = classification(current) == WALL ? true : false;
     return ret;
 }
 
 Bool stopAtPerpendicularPassage(Point start, Point current) {
-    Point perpA, perpB;
-    Bool ret = history[current.x][current.y].classification == WALL ? true : false;
+    Point perpA = cutToMazeBounds( ceilVec(perpVec(current, start))),
+          perpB = cutToMazeBounds( ceilVec(perpVec(start, current)));
+    Bool ret = classification(perpA) == FLOOR ||
+               classification(perpB) == FLOOR;
     return ret;
 }
 
@@ -367,7 +312,7 @@ int comparePathOptions(int n_explored, int n_closeness, int n_length,
 
 Point  getDesLocation(Point _curr_pos){
 #define TRANS(dir) translateOnAxisInDirection(_curr_pos, dir, 1)
-
+#define _(dir) = TRANS(dir)
     Vec4 statuses,
         distances ,
         lengths = collectDistancesToWalls(),
@@ -375,10 +320,13 @@ Point  getDesLocation(Point _curr_pos){
         directions = {0,1,2,3};
     
     //The points in all four directions
-        Point n = TRANS(0),
-        s = TRANS(2),
-        w = TRANS(3),
-        e = TRANS(1);
+    
+                Point
+              n _(0),
+           w _(3),e _(1),
+              s _(2)
+                  ;
+
     //For easy access by index
     Point *pts[] = {&n, &e, &s, &w};
 
@@ -393,48 +341,61 @@ Point  getDesLocation(Point _curr_pos){
         Point vec_to_end = subVec(heading_direction, headingLocation);
         //if the path does not exist, then delete it - mark as DEAD_END
         distances[i]    =  min(absv(vec_to_end.x), absv(vec_to_end.y));
-        statuses[i]     =  history[heading_direction.x][heading_direction.y].status;
+        statuses[i]     =  status(heading_direction);
         
-        if (cmpVec(heading_direction, _curr_pos) || history[heading_direction.x][heading_direction.y].classification == WALL || !pointInIndBounds(direction_translated)) {
-            availablities[i] = POINT_UNREACHABLE;
+        if (
+            cmpVec(heading_direction, _curr_pos)       ||
+             classification(heading_direction) == WALL ||
+            !pointInIndBounds(direction_translated)
+            ){
+            
+                availablities[i] = POINT_UNREACHABLE;
         }
     }
     
     Bool surrounded_by_explored =
-        history[n.x][n.y].status == EXPLORED   &&
-        history[s.x][s.y].status == EXPLORED   &&
-        history[w.x][w.y].status == EXPLORED   &&
-        history[e.x][e.y].status == EXPLORED;
+        (status(n) == EXPLORED||!pointInIndBounds(n))   &&
+        (status(s) == EXPLORED||!pointInIndBounds(s))   &&
+        (status(w) == EXPLORED||!pointInIndBounds(w))   &&
+        (status(e) == EXPLORED||!pointInIndBounds(e));
 
     int num_pass_available = 0;
-        num_pass_available += history[n.x][n.y].classification == WALL;
-        num_pass_available += history[s.x][s.y].classification == WALL;
-        num_pass_available += history[w.x][w.y].classification == WALL;
-        num_pass_available += history[e.x][e.y].classification == WALL;
+        num_pass_available += (classification(n) == WALL || !pointInIndBounds(n));
+        num_pass_available += (classification(s) == WALL || !pointInIndBounds(s));
+        num_pass_available += (classification(w) == WALL || !pointInIndBounds(w));
+        num_pass_available += (classification(e) == WALL || !pointInIndBounds(e));
     
     Bool hit_dead_end = num_pass_available == 3;
-    
+    Bool blocked_in_by_wall = num_pass_available == 4;
     //If we have explored in every direction,
     //then find the nearest unexplored postion,
     //and set it as deslocation
     if (surrounded_by_explored) {
-        
+        printf("SURROUNDED BY EXPLORED");
+        exit(EXIT_SUCCESS);
     } else if (hit_dead_end){
-        
+        printf("DEAD END");
+        exit(EXIT_SUCCESS);
+    } else if (blocked_in_by_wall){
+        printf("BLOCKED IN BY WALL");
+        exit(EXIT_SUCCESS);
+
     }
     //Normal circumstances
     //Insertion sort the distances.
     for (int i = 1; i < 4; i++) {
         int j = i - 1;
-        while ( (j >= 0) &&
+        while (
+               (j >= 0) &&
                comparePathOptions(
-                                  statuses[  directions[i] ],
+                                  statuses [ directions[i] ],
                                   distances[ directions[i] ],
-                                  lengths[   directions[i] ],
-                                  statuses[  directions[j] ],
+                                  lengths  [ directions[i] ],
+                                  statuses [ directions[j] ],
                                   distances[ directions[j] ],
-                                  lengths[   directions[j] ]
-                                  ) == MORE_THAN ) {
+                                  lengths  [ directions[j] ]
+                                  ) == MORE_THAN
+               ) {
                    int temp = directions[i];
                    directions[i] = directions[j];
                    directions[j] = temp;
@@ -450,9 +411,8 @@ Point  getDesLocation(Point _curr_pos){
     }
     return TRANS(dir);
 
-
-
 #undef TRANS
+#undef _
 }
 
 Point one_square_closer_to_next_location(Point _curr_pos, Point next_location){
@@ -546,9 +506,9 @@ void pathfind_print(void){
             
             if (cmpVec(Vec(width,height), location)) {
                 printf("%c",CAR_C);
-            } else if(history[width][height].status == UNEXPLORED){
+            } else if(status(Vec(width, height)) == UNEXPLORED){
                 
-                switch (history[width][height].classification) {
+                switch (classification(Vec(width, height))) {
                     case FLOOR:
                         printf("%c",UNEX_C);
                         break;
@@ -557,8 +517,8 @@ void pathfind_print(void){
                     default:
                         break;
                 }
-            }else if(history[width][height].status == EXPLORED){
-                if (history[width][height].classification == FLOOR) {
+            }else if(status(Vec(width, height)) == EXPLORED){
+                if (classification(Vec(width, height)) == FLOOR) {
                     printf("%c",FLOOR_C);
                 } else {
                     printf("%c",WALL_C);
