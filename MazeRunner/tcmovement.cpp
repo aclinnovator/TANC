@@ -50,3 +50,24 @@ int pointsOnAxisInDirectionUntil(
     return 0;
     
 }
+
+//int pointsOnAxisInDirectionUntil_Exclusive(
+//                                 Point p,
+//                                 PointFunction checker,
+//                                 PointFunction mustStopChecker,
+//                                 int direction,
+//                                 int axial_magnitude) {
+//    
+//    int ctr = 0;
+//    Point st = Vec(p.x,p.y);
+//    while (pointInIndBounds(p)) {
+//        if (mustStopChecker(st,p)) {
+//            return 0;
+//        }
+//        if (checker(st, p)) return ctr;
+//        p = translateOnAxisInDirection(p, direction, axial_magnitude);
+//        ctr++;
+//    }
+//    return 0;
+//    
+//}

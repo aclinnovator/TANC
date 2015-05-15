@@ -79,7 +79,8 @@ Bool stopAtPerpendicularPassage(Point start, Point current) {
     Point perpA = addVec(start, perp_vec);
     Point perpB = addVec(start, multVec(perp_vec, Vec(-1,-1)));
     
-    Bool isSame = cmpVec(current, start), ret = (!isSame)&&((classification(perpA) == FLOOR) || (classification(perpB) == FLOOR));
+    Bool isSame = cmpVec(current, start), ret = (!isSame)&& (
+                                                            ((classification(perpA) == FLOOR) || (classification(perpB) == FLOOR)) && (classification(start) == FLOOR));
     
     return ret;
 }
@@ -112,10 +113,12 @@ Vec4 collectDistancesToUnexplored(){
 
 Vec4 collectDistancesToPerpendicular(){
     Vec4 measurements;
-    measurements[0] = pointsOnAxisInDirectionUntil(location, stopAtPerpendicularPassage, 0, 1),
-    measurements[1] = pointsOnAxisInDirectionUntil(location, stopAtPerpendicularPassage, 1, 1),
-    measurements[2] = pointsOnAxisInDirectionUntil(location, stopAtPerpendicularPassage, 2, 1),
-    measurements[3] = pointsOnAxisInDirectionUntil(location, stopAtPerpendicularPassage, 3, 1);
+    measurements[0] = pointsOnAxisInDirectionUntil(location, stopAtPerpendicularPassage, 0, 1)+1,
+    measurements[1] = pointsOnAxisInDirectionUntil(location, stopAtPerpendicularPassage, 1, 1)+1,
+    measurements[2] = pointsOnAxisInDirectionUntil(location, stopAtPerpendicularPassage, 2, 1)+1,
+    measurements[3] = pointsOnAxisInDirectionUntil(location, stopAtPerpendicularPassage, 3, 1)+1;
+    
+    
     return measurements;
 }
 
@@ -137,14 +140,12 @@ Point nearestPointThatSatisfies(Point start, Point comingFrom, PointFunction che
     Point vec_to_start = ceilVec(getVec(start, comingFrom));
     
     for (int i=0; i<4; i++) {
-        int direction_came_from = cmpVec(dirVec(i),vec_to_start) && !cmpVec(start, comingFrom);
-        if((toUnexplored[i]>0) && (!direction_came_from )){
+        int direction_came_from = cmpVec(dirVec(i),vec_to_start);
+        if(toUnexplored[i]>0) {
             numfruitful++, min = toUnexplored[i] < min ? toUnexplored[i] : min, mindir = i;
-        } else {
-            points_available[i] = POINT_UNREACHABLE;
         }
-        
-        if (toPerp[i] ==0) points_available[i] = POINT_UNREACHABLE;
+        if ((toPerp[i] ==0) || (classification( translateOnAxisInDirection(start, i, 1)  ) ==WALL) || direction_came_from)
+            points_available[i] = POINT_UNREACHABLE;
     }
     
     
@@ -171,7 +172,7 @@ Point nearestPointThatSatisfies(Point start, Point comingFrom, PointFunction che
         
         for (int i=0; i<4; i++) {
             int direction = directions[i];
-            if (points_available[direction]) {
+            if (points_available[direction]==POINT_REACHABLE) {
                 
                 Point vec = ceilVec( getVec(comingFrom, start));
                 Point perp_vec = perpVec(vec);
@@ -185,7 +186,7 @@ Point nearestPointThatSatisfies(Point start, Point comingFrom, PointFunction che
                     return perpA;
                 } else if (status(perpB)==UNEXPLORED) { return perpB; }
                 else {
-                    
+                    return Vec(NULL, NULL);
                 }
                 
             }

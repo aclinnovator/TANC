@@ -124,7 +124,7 @@
 #define    EXPLORED_FAR_LONG         8
 
 #define POINT_REACHABLE              1
-#define POINT_UNREACHABLE            2
+#define POINT_UNREACHABLE            0
 
 /*-------( Math related )-------*/
 #define EVEN                         1
@@ -133,6 +133,8 @@
 #define EQUAL                        0
 #define MORE_THAN                    1
 #define LESS_THAN                    2
+
+
 
 //################ Macro Functions #########################
 #define inBound(val, min, max) ((val >= min) && (val <= max))
