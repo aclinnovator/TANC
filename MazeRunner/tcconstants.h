@@ -9,12 +9,50 @@
 #ifndef MazeRunner_constants_h
 #define MazeRunner_constants_h
 
+
+
 //################ Program level settings ##################
 
 //What type of maze we are dealing with
 #define MAZE_TYPE_BLOCKS      1
+                /*
+                 
+                     #---#---#---#---#---#
+                 5   |   |   |   |   |   |
+                     #---#---#---#---#---#
+                 4   |   |   |   |   |   |
+                     #---#---#---#---#---#
+                 3   |   |   |   |   |   |
+                     #---#---#---#---#---#
+                 2   |   |   |   |   |   |
+                     #---#---#---#---#---#
+                 1   |   |   |   |   |   |
+                     #---#---#---#---#---#
+                       1   2   3   4   5
+                 
+                 5 * 5 = 25in^2
+                 */
 #define MAZE_TYPE_WALLS       2
 
+                /*
+                 
+                 
+                 11  #---#---#---#---#---#
+                 10  |   |   |   |   |   |
+                 9   #---#---#---#---#---#
+                 8   |   |   |   |   |   |
+                 7   #---#---#---#---#---#
+                 6   |   |   |   |   |   |
+                 5   #---#---#---#---#---#
+                 4   |   |   |   |   |   |
+                 3   #---#---#---#---#---#
+                 2   |   |   |   |   |   |
+                 1   #---#---#---#---#---#
+                     1 2 3 4 5 6 7 8 9 10 11
+                 
+                 11 * 11 = 121in^2
+                 
+                 */
 #define MAZE_TYPE        MAZE_TYPE_BLOCKS
 
 #define IS_BLOCKS MAZE_TYPE == MAZE_TYPE_BLOCKS
@@ -25,8 +63,8 @@
 //There are three parameters that can be changed -
 //MAZE_HEIGHT, MAZE_WIDTH, and SQUARE_SIZE_INCH  -
 //If they are not already implemented, then use defaults.
-#define MAZE_HEIGHT           5
-#define MAZE_WIDTH            5
+#define MAZE_HEIGHT           7
+#define MAZE_WIDTH            7
 #define SQUARE_SIZE_INCH      1
 
 
@@ -88,13 +126,26 @@
 #define POINT_REACHABLE              1
 #define POINT_UNREACHABLE            2
 
-
-
+/*-------( Math related )-------*/
 #define EVEN                         1
 #define ODD                          2
 
 #define EQUAL                        0
 #define MORE_THAN                    1
 #define LESS_THAN                    2
+
+//################ Macro Functions #########################
+#define inBound(val, min, max) ((val >= min) && (val <= max))
+//----
+#define inBoundsX(x) inBound(x, 0, MAZE_WIDTH)
+#define inBoundsY(x) inBound(y, 0, MAZE_HEIGHT)
+//----
+#define inBoundsIndX(x) inBound(x, 0, MAZE_WIDTH - 1)
+#define inBoundsIndY(y) inBound(y, 0, MAZE_HEIGHT - 1)
+#define oddOrEven(n) ((n % 2) == 0)
+
+#define getAxis(direction) \
+(oddOrEven(direction) == EVEN ? Y_AXIS : X_AXIS)
+
 
 #endif

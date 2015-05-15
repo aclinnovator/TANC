@@ -8,10 +8,7 @@
 
 #ifndef __MazeRunner__vec__
 #define __MazeRunner__vec__
-
-#include <stdio.h>
 #include "tcmath.h"
-#endif /* defined(__MazeRunner__vec__) */
 
 /*--------( Vector functions )-------*/
 
@@ -35,6 +32,12 @@ Point subVec(Point a, Point b);
 
 Point multVec(Point a, Point b);
 
-Point perpVec(Point a, Point b);
+Point perpVec(Point vec);
 
 Point absVec(Point a);
+
+#ifdef __APPLE__
+void printPoint(Point pt);
+#endif
+
+#endif /* defined(__MazeRunner__vec__) */

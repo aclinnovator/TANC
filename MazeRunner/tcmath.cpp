@@ -8,8 +8,6 @@
 
 #include "tcmath.h"
 
-
-
 int cut(int n, int mag, int _min, int _max){
     int res;
     

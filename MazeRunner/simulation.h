@@ -1,4 +1,4 @@
-#include "./pathfind.h"
+#include "tcpathfind.h"
 
 
 void printVec4f(Vec4f _vec){
@@ -22,15 +22,18 @@ void printVec4f(Vec4f _vec){
 */
 
 #define START_POS Vec(0,0)
-#define HEADING Vec(4,4)
-
+#define HEADING Vec(0,7)
+#define X 1
 
 int maze[MAZE_WIDTH][MAZE_HEIGHT] = {
-    { 0 , 1 , 1 , 0 , 1 },
-    { 1 , 0 , 1 , 1 , 1 },
-    { 1 , 0 , 1 , 0 , 0 },
-    { 1 , 0 , 1 , 0 , 0 },
-    { 1 , 0 , 0 , 0 , 0 }
+    { 0 , X , X , X , X , X , 0 }, //0
+    { 0 , X , 0 , 0 , 0 , X , 0 }, //1
+    { 0 , X , 0 , X , 0 , X , 0 }, //2
+    { 0 , 0 , 0 , X , 0 , X , 0 }, //3
+    { 0 , X , 0 , 0 , 0 , X , 0 }, //4
+    { 0 , X , X , X , X , X , 0 }, //5
+    { 0 , 0 , 0 , 0 , 0 , 0 , 0 }  //6
+    //1   2   3   4   5   6   7
 };
 
 //Gershon's phone number: 551-795-9634
@@ -76,7 +79,7 @@ Vec4f collectMeasurements(){
 
 void runSimulation(){
     
-    currentPosition.x = 0;currentPosition.y = 0;
+    currentPosition = START_POS;
     printPoint(currentPosition);
     
     pathfind_init(currentPosition, HEADING);

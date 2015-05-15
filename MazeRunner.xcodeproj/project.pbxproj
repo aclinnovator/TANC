@@ -7,11 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D5F2B2F1B055DCF0031E33D /* tcstorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D5F2B2D1B055DCF0031E33D /* tcstorage.cpp */; };
 		4D8B923D1AF2F4B600A64CCC /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D8B923C1AF2F4B600A64CCC /* main.cpp */; };
-		4D8B92461AF2F51000A64CCC /* pathfind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D8B92431AF2F51000A64CCC /* pathfind.cpp */; };
+		4D8B92461AF2F51000A64CCC /* tcpathfind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D8B92431AF2F51000A64CCC /* tcpathfind.cpp */; };
 		4D8B92471AF2F51000A64CCC /* simulation.h in Sources */ = {isa = PBXBuildFile; fileRef = 4D8B92441AF2F51000A64CCC /* simulation.h */; };
 		4D93A0821B03B36700057E31 /* tcpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D93A0801B03B36700057E31 /* tcpoint.cpp */; };
 		4D93A0851B03B3F900057E31 /* tcmath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D93A0831B03B3F900057E31 /* tcmath.cpp */; };
+		4D93A0891B052BC400057E31 /* tcmovement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D93A0871B052BC400057E31 /* tcmovement.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,16 +29,21 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4D5F2B2D1B055DCF0031E33D /* tcstorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tcstorage.cpp; sourceTree = "<group>"; };
+		4D5F2B2E1B055DCF0031E33D /* tcstorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tcstorage.h; sourceTree = "<group>"; };
+		4D5F2B301B055E220031E33D /* tctypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tctypes.h; sourceTree = "<group>"; };
 		4D8B92391AF2F4B600A64CCC /* MazeRunner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MazeRunner; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D8B923C1AF2F4B600A64CCC /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		4D8B92431AF2F51000A64CCC /* pathfind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pathfind.cpp; sourceTree = "<group>"; };
+		4D8B92431AF2F51000A64CCC /* tcpathfind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tcpathfind.cpp; sourceTree = "<group>"; };
 		4D8B92441AF2F51000A64CCC /* simulation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = simulation.h; sourceTree = "<group>"; };
-		4D8B92451AF2F51000A64CCC /* pathfind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pathfind.h; sourceTree = "<group>"; };
+		4D8B92451AF2F51000A64CCC /* tcpathfind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tcpathfind.h; sourceTree = "<group>"; };
 		4D93A0801B03B36700057E31 /* tcpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tcpoint.cpp; sourceTree = "<group>"; };
 		4D93A0811B03B36700057E31 /* tcpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tcpoint.h; sourceTree = "<group>"; };
 		4D93A0831B03B3F900057E31 /* tcmath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tcmath.cpp; sourceTree = "<group>"; };
 		4D93A0841B03B3F900057E31 /* tcmath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tcmath.h; sourceTree = "<group>"; };
 		4D93A0861B03B5DE00057E31 /* tcconstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tcconstants.h; sourceTree = "<group>"; };
+		4D93A0871B052BC400057E31 /* tcmovement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tcmovement.cpp; sourceTree = "<group>"; };
+		4D93A0881B052BC400057E31 /* tcmovement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tcmovement.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,6 +57,69 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4D5F2B321B055F440031E33D /* helpers */ = {
+			isa = PBXGroup;
+			children = (
+				4D5F2B301B055E220031E33D /* tctypes.h */,
+				4D93A0861B03B5DE00057E31 /* tcconstants.h */,
+			);
+			name = helpers;
+			sourceTree = "<group>";
+		};
+		4D5F2B331B055F520031E33D /* Pathfind */ = {
+			isa = PBXGroup;
+			children = (
+				4D8B92431AF2F51000A64CCC /* tcpathfind.cpp */,
+				4D8B92451AF2F51000A64CCC /* tcpathfind.h */,
+			);
+			name = Pathfind;
+			sourceTree = "<group>";
+		};
+		4D5F2B341B055F570031E33D /* Point */ = {
+			isa = PBXGroup;
+			children = (
+				4D93A0811B03B36700057E31 /* tcpoint.h */,
+				4D93A0801B03B36700057E31 /* tcpoint.cpp */,
+			);
+			name = Point;
+			sourceTree = "<group>";
+		};
+		4D5F2B351B055F5D0031E33D /* Math */ = {
+			isa = PBXGroup;
+			children = (
+				4D93A0831B03B3F900057E31 /* tcmath.cpp */,
+				4D93A0841B03B3F900057E31 /* tcmath.h */,
+			);
+			name = Math;
+			sourceTree = "<group>";
+		};
+		4D5F2B361B055F630031E33D /* Movement */ = {
+			isa = PBXGroup;
+			children = (
+				4D93A0871B052BC400057E31 /* tcmovement.cpp */,
+				4D93A0881B052BC400057E31 /* tcmovement.h */,
+			);
+			name = Movement;
+			sourceTree = "<group>";
+		};
+		4D5F2B371B055F690031E33D /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				4D5F2B2D1B055DCF0031E33D /* tcstorage.cpp */,
+				4D5F2B2E1B055DCF0031E33D /* tcstorage.h */,
+			);
+			name = Storage;
+			sourceTree = "<group>";
+		};
+		4D5F2B381B055F760031E33D /* boot */ = {
+			isa = PBXGroup;
+			children = (
+				4D8B92441AF2F51000A64CCC /* simulation.h */,
+				4D8B923C1AF2F4B600A64CCC /* main.cpp */,
+			);
+			name = boot;
+			sourceTree = "<group>";
+		};
 		4D8B92301AF2F4B600A64CCC = {
 			isa = PBXGroup;
 			children = (
@@ -69,15 +139,13 @@
 		4D8B923B1AF2F4B600A64CCC /* MazeRunner */ = {
 			isa = PBXGroup;
 			children = (
-				4D93A0831B03B3F900057E31 /* tcmath.cpp */,
-				4D93A0841B03B3F900057E31 /* tcmath.h */,
-				4D93A0811B03B36700057E31 /* tcpoint.h */,
-				4D93A0801B03B36700057E31 /* tcpoint.cpp */,
-				4D8B923C1AF2F4B600A64CCC /* main.cpp */,
-				4D8B92431AF2F51000A64CCC /* pathfind.cpp */,
-				4D8B92451AF2F51000A64CCC /* pathfind.h */,
-				4D93A0861B03B5DE00057E31 /* tcconstants.h */,
-				4D8B92441AF2F51000A64CCC /* simulation.h */,
+				4D5F2B371B055F690031E33D /* Storage */,
+				4D5F2B361B055F630031E33D /* Movement */,
+				4D5F2B351B055F5D0031E33D /* Math */,
+				4D5F2B341B055F570031E33D /* Point */,
+				4D5F2B331B055F520031E33D /* Pathfind */,
+				4D5F2B321B055F440031E33D /* helpers */,
+				4D5F2B381B055F760031E33D /* boot */,
 			);
 			path = MazeRunner;
 			sourceTree = "<group>";
@@ -139,8 +207,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				4D93A0821B03B36700057E31 /* tcpoint.cpp in Sources */,
+				4D5F2B2F1B055DCF0031E33D /* tcstorage.cpp in Sources */,
+				4D93A0891B052BC400057E31 /* tcmovement.cpp in Sources */,
 				4D8B923D1AF2F4B600A64CCC /* main.cpp in Sources */,
-				4D8B92461AF2F51000A64CCC /* pathfind.cpp in Sources */,
+				4D8B92461AF2F51000A64CCC /* tcpathfind.cpp in Sources */,
 				4D93A0851B03B3F900057E31 /* tcmath.cpp in Sources */,
 				4D8B92471AF2F51000A64CCC /* simulation.h in Sources */,
 			);

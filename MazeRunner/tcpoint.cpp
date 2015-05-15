@@ -7,6 +7,7 @@
 //
 
 #include "tcpoint.h"
+#include "stdio.h"
 Point Vec(int x, int y){
     Point p; p.x = x; p.y = y;
     return p;
@@ -42,8 +43,9 @@ Point multVec(Point a, Point b){
     return Vec(a.x * b.x, a.y * b.y);
 }
 
-Point perpVec(Point a, Point b){
-    return multVec(getVec(a,b), Vec(1,-1));
+Point perpVec(Point vec){
+    Point ret = Vec(vec.y,vec.x);
+    return ret;
 }
 
 Point absVec(Point p){
@@ -56,3 +58,6 @@ Bool cmpVec(Point n, Point l){
     Bool a = n.x == l.x, b = n.y == l.y;
     return a && b;
 }
+
+
+void printPoint(Point pt) { printf("x: %d, y: %d\n",pt.x, pt.y); }
