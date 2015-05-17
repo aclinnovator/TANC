@@ -388,67 +388,69 @@ Point  getDesLocation(Point _curr_pos){
         printf("BLOCKED IN BY WALL");
         exit(EXIT_SUCCESS);
 
-    }
-    
-    Vec4 statuses,
-    distances ,
-    lengths = collectDistancesToWalls(location),
-    availablities = {POINT_REACHABLE, POINT_REACHABLE, POINT_REACHABLE, POINT_REACHABLE},
-    directions = {0,1,2,3};
-    
-    //For easy access by index
-    Point *pts[] = {&n, &e, &s, &w};
-    
-
-    //Collect data for each direction:
-    for (int i=0; i < 4; i++) {
-        Point direction_translated = *pts[i];
-        Point heading_direction = pointToReachableSquare(direction_translated , i);
+    } else {
+        Vec4 statuses,
+        distances ,
+        lengths = collectDistancesToWalls(location),
+        availablities = {POINT_REACHABLE, POINT_REACHABLE, POINT_REACHABLE, POINT_REACHABLE},
+        directions = {0,1,2,3};
         
-        Point vec_to_end = subVec(heading_direction, headingLocation);
-        //if the path does not exist, then delete it - mark as DEAD_END
-        distances[i]    =  min(absv(vec_to_end.x), absv(vec_to_end.y));
-        statuses[i]     =  status(heading_direction);
+        //For easy access by index
+        Point *pts[] = {&n, &e, &s, &w};
         
-        if (
-            cmpVec(heading_direction, _curr_pos)      ||
-            classification(heading_direction) == WALL ||
-            !pointInIndBounds(direction_translated)
-            ){
+        
+        //Collect data for each direction:
+        for (int i=0; i < 4; i++) {
+            Point direction_translated = *pts[i];
+            Point heading_direction = pointToReachableSquare(direction_translated , i);
             
-            availablities[i] = POINT_UNREACHABLE;
+            Point vec_to_end = subVec(heading_direction, headingLocation);
+            //if the path does not exist, then delete it - mark as DEAD_END
+            distances[i]    =  min(absv(vec_to_end.x), absv(vec_to_end.y));
+            statuses[i]     =  status(heading_direction);
+            
+            if (
+                cmpVec(heading_direction, _curr_pos)      ||
+                classification(heading_direction) == WALL ||
+                !pointInIndBounds(direction_translated)
+                ){
+                
+                availablities[i] = POINT_UNREACHABLE;
+            }
         }
+        
+        //Normal circumstances
+        //Insertion sort the distances.
+        for (int i = 1; i < 4; i++) {
+            int j = i - 1;
+            while (
+                   (j >= 0) &&
+                   comparePathOptions(
+                                      statuses [ directions[i] ],
+                                      distances[ directions[i] ],
+                                      lengths  [ directions[i] ],
+                                      statuses [ directions[j] ],
+                                      distances[ directions[j] ],
+                                      lengths  [ directions[j] ]
+                                      ) == MORE_THAN
+                   ) {
+                int temp = directions[i];
+                directions[i] = directions[j];
+                directions[j] = temp;
+                j--;
+            }
+        }
+        //Get the first available endpoint
+        int ind = 0;
+        int dir = directions[ind];
+        while (availablities[ directions[ind] ] == POINT_UNREACHABLE && (ind<4)) {
+            dir = directions[ind+1];
+            ind++;
+        }
+        return TRANS(dir);
     }
-
-    //Normal circumstances
-    //Insertion sort the distances.
-    for (int i = 1; i < 4; i++) {
-        int j = i - 1;
-        while (
-               (j >= 0) &&
-               comparePathOptions(
-                                  statuses [ directions[i] ],
-                                  distances[ directions[i] ],
-                                  lengths  [ directions[i] ],
-                                  statuses [ directions[j] ],
-                                  distances[ directions[j] ],
-                                  lengths  [ directions[j] ]
-                                  ) == MORE_THAN
-               ) {
-                   int temp = directions[i];
-                   directions[i] = directions[j];
-                   directions[j] = temp;
-                   j--;
-               }
-    }
-    //Get the first available endpoint
-    int ind = 0;
-    int dir = directions[ind];
-    while (availablities[ directions[ind] ] == POINT_UNREACHABLE && (ind<4)) {
-        dir = directions[ind+1];
-        ind++;
-    }
-    return TRANS(dir);
+    
+  
 
 #undef TRANS
 #undef _
