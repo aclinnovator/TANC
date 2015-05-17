@@ -20,6 +20,8 @@ Point nextLocation;
 Point headingLocation;
 
 MazeSquare hist[MAZE_WIDTH][MAZE_HEIGHT];
+
+
 #if IS_BLOCKS
 
 
@@ -67,17 +69,62 @@ int floorsIlluminatedByMeasurement(float measurement){
 
 #endif //Maze_Type == ?
 
+
+#define GET_AROUND(name, func, equalsWhat, comp, statusOfPoint) \
+    Vec4 numSurrounding##name(Point p) { \
+        Vec4 ret;    \
+        Point \
+        n = translateOnAxisInDirection(p, 0, 1), \
+        w = translateOnAxisInDirection(p, 3, 1),e = translateOnAxisInDirection(p, 1, 1), \
+        s = translateOnAxisInDirection(p, 2, 1) \
+        ;\
+        ret[0] = (func(n) == equalsWhat)comp statusOfPoint(n), \
+        ret[1] = (func(s) == equalsWhat)comp statusOfPoint(s), \
+        ret[2] = (func(w) == equalsWhat)comp statusOfPoint(w), \
+        ret[3] = (func(e) == equalsWhat)comp statusOfPoint(e); \
+    return ret; \
+}
+
+GET_AROUND(walls, classification, WALL, ||, !pointInIndBounds)
+GET_AROUND(pathways, classification, FLOOR, &&, pointInIndBounds)
+GET_AROUND(explored_pathways, status, EXPLORED, &&, pointInIndBounds)
+
+#undef GET_AROUND
+
+
+Bool deadEnd(Point p, Point prev_loc, Vec4 walls){
+    
+    int bn = walls[0],
+        be = walls[1],
+        bs = walls[2],
+        bw = walls[3],
+        num_walls = bn+be+bs+bw;
+    
+    Point stc = ceilVec( getVec(prev_loc, p) );
+    
+    Bool blocked_pathways_are_ahead = ((stc.y==-1)&&bs) || ((stc.y== 1) &&bn) ||
+    ((stc.x== 1)&&be) || ((stc.x==-1) &&bw);
+    Bool hit_dead_end = num_walls == 3 && blocked_pathways_are_ahead; //none of the blocked pathways are in the vector going from prevPos to currPos and prevPos!=currPos;
+    return hit_dead_end;
+
+}
+
+
 Bool stopAtWall(Point start, Point current){
     //Will we need to check for explored or unexplored.
     return classification(current) == WALL;
+}
+
+Bool stopAtCurrentLocation(Point start, Point current){
+    return stopAtWall(start, current) || cmpVec(current, location);
 }
 
 Bool stopAtPerpendicularPassage(Point start, Point current) {
     Point vec = ceilVec( getVec(start, current));
     Point perp_vec = perpVec(vec);
     
-    Point perpA = addVec(start, perp_vec);
-    Point perpB = addVec(start, multVec(perp_vec, Vec(-1,-1)));
+    Point perpA = addVec(current, perp_vec);
+    Point perpB = addVec(current, multVec(perp_vec, Vec(-1,-1)));
     
     Bool isSame = cmpVec(current, start), ret = (!isSame)&& (
                                                             ((classification(perpA) == FLOOR) || (classification(perpB) == FLOOR)) && (classification(start) == FLOOR));
@@ -93,42 +140,53 @@ Bool stopAtUnExploredAndNotWall(Point start, Point current){
     return (status(start) == UNEXPLORED) && (classification(start)==FLOOR);
 }
 
-Vec4 collectDistancesToWalls(){
+Vec4 collectDistancesToWalls(Point start){
     Vec4 measurements;
-    measurements[0] = pointsOnAxisInDirectionUntil(location, stopAtWall, 0, 1),
-    measurements[1] = pointsOnAxisInDirectionUntil(location, stopAtWall, 1, 1),
-    measurements[2] = pointsOnAxisInDirectionUntil(location, stopAtWall, 2, 1),
-    measurements[3] = pointsOnAxisInDirectionUntil(location, stopAtWall, 3, 1);
+    measurements[0] = pointsOnAxisInDirectionUntil(start, stopAtWall, 0, 1),
+    measurements[1] = pointsOnAxisInDirectionUntil(start, stopAtWall, 1, 1),
+    measurements[2] = pointsOnAxisInDirectionUntil(start, stopAtWall, 2, 1),
+    measurements[3] = pointsOnAxisInDirectionUntil(start, stopAtWall, 3, 1);
    return measurements;
 }
 
-Vec4 collectDistancesToUnexplored(){
+Vec4 collectDistancesToUnexplored(Point start){
     Vec4 measurements;
-    measurements[0] = pointsOnAxisInDirectionUntil(location, stopAtUnExploredAndNotWall, 0, 1),
-    measurements[1] = pointsOnAxisInDirectionUntil(location, stopAtUnExploredAndNotWall, 1, 1),
-    measurements[2] = pointsOnAxisInDirectionUntil(location, stopAtUnExploredAndNotWall, 2, 1),
-    measurements[3] = pointsOnAxisInDirectionUntil(location, stopAtUnExploredAndNotWall, 3, 1);
+    measurements[0] = pointsOnAxisInDirectionUntilWithStopChecker(start, stopAtUnExplored, stopAtWall, 0, 1,0),
+    measurements[1] = pointsOnAxisInDirectionUntilWithStopChecker(start, stopAtUnExplored, stopAtWall, 1, 1,0),
+    measurements[2] = pointsOnAxisInDirectionUntilWithStopChecker(start, stopAtUnExplored, stopAtWall, 2, 1,0),
+    measurements[3] = pointsOnAxisInDirectionUntilWithStopChecker(start, stopAtUnExplored, stopAtWall, 3, 1,0);
     return measurements;
 }
 
-Vec4 collectDistancesToPerpendicular(){
+Vec4 collectDistancesToPerpendicular(Point start){
     Vec4 measurements;
-    measurements[0] = pointsOnAxisInDirectionUntil(location, stopAtPerpendicularPassage, 0, 1)+1,
-    measurements[1] = pointsOnAxisInDirectionUntil(location, stopAtPerpendicularPassage, 1, 1)+1,
-    measurements[2] = pointsOnAxisInDirectionUntil(location, stopAtPerpendicularPassage, 2, 1)+1,
-    measurements[3] = pointsOnAxisInDirectionUntil(location, stopAtPerpendicularPassage, 3, 1)+1;
-    
-    
+    measurements[0] = pointsOnAxisInDirectionUntilWithStopChecker(start, stopAtPerpendicularPassage, stopAtWall, 0, 1,0),
+    measurements[1] = pointsOnAxisInDirectionUntilWithStopChecker(start, stopAtPerpendicularPassage, stopAtWall, 1, 1,0),
+    measurements[2] = pointsOnAxisInDirectionUntilWithStopChecker(start, stopAtPerpendicularPassage, stopAtWall, 2, 1,0),
+    measurements[3] = pointsOnAxisInDirectionUntilWithStopChecker(start, stopAtPerpendicularPassage, stopAtWall, 3, 1,0);
     return measurements;
 }
 
 
 
-Point nearestPointThatSatisfies(Point start, Point comingFrom, PointFunction checker) {
+Point nearestUnexplored(Point start, Point comingFrom) {
+    
     //if it hits a dead end
     //if it satisfies checker
-    Vec4 toUnexplored = collectDistancesToUnexplored();
-    Vec4 toPerp = collectDistancesToPerpendicular();
+    //Then return
+    
+    Bool adjacent =((start.x==location.x)||(start.y == location.y)),
+        same_vec = cmpVec( ceilVec(  getVec(comingFrom, start)), ceilVec( getVec(location, start)) ),
+        same_point = cmpVec(start, location);
+    
+    if (classification(start) == UNEXPLORED) return start;
+    else if(deadEnd(start, comingFrom, numSurroundingwalls(start)) ||
+        ((adjacent&&!same_vec)  && !same_point)   ) {
+            return Vec(NULL, NULL);
+        }
+    
+    Vec4 toUnexplored = collectDistancesToUnexplored(start);
+    Vec4 toPerp = collectDistancesToPerpendicular(start);
 
     Vec4 points_available = {POINT_REACHABLE, POINT_REACHABLE, POINT_REACHABLE, POINT_REACHABLE};
     Vec4 directions = {0,1,2,3};
@@ -144,7 +202,8 @@ Point nearestPointThatSatisfies(Point start, Point comingFrom, PointFunction che
         if(toUnexplored[i]>0) {
             numfruitful++, min = toUnexplored[i] < min ? toUnexplored[i] : min, mindir = i;
         }
-        if ((toPerp[i] ==0) || (classification( translateOnAxisInDirection(start, i, 1)  ) ==WALL) || direction_came_from)
+        Point trans = translateOnAxisInDirection(start, i, 1) ;
+        if ((toPerp[i] ==0) || (classification( trans ) ==WALL) || direction_came_from)
             points_available[i] = POINT_UNREACHABLE;
     }
     
@@ -181,22 +240,27 @@ Point nearestPointThatSatisfies(Point start, Point comingFrom, PointFunction che
                 //if the perp is fruitful, return that location.
                 //If it is not fruitful, then call this function a second time.
                 Point perpA = addVec(translated, perp_vec), perpB =addVec(translated, multVec(perp_vec, Vec(-1,-1)));
-                
-                if (status(perpA)==UNEXPLORED) {
+
+                if ((status(perpA)==UNEXPLORED) && (classification(perpA)==FLOOR)) {
                     return perpA;
-                } else if (status(perpB)==UNEXPLORED) { return perpB; }
-                else {
-                    return Vec(NULL, NULL);
+                } else if ((status(perpB)==UNEXPLORED) &&(classification(perpB)==FLOOR)) { return perpB; }
+                else
+                {
+                    Point vec = nearestUnexplored(translated, start);
+                    if (!isnullVec(vec)) {
+                        return vec;
+                    }
                 }
                 
             }
 
         }
         
+    } else if (numfruitful>0){
+        return translateOnAxisInDirection(start, mindir, toUnexplored[mindir]);
     }
-
-    return translateOnAxisInDirection(start, mindir, min);
     
+    return nullVec();
 }
 
 
@@ -300,40 +364,23 @@ Point  getDesLocation(Point _curr_pos){
               s _(2)
                   ;
     
-    int num_pathways =
-        (pointInIndBounds(n) && (classification(n) == FLOOR)) +
-        (pointInIndBounds(s) && (classification(s) == FLOOR)) +
-        (pointInIndBounds(w) && (classification(w) == FLOOR)) +
-        (pointInIndBounds(e) && (classification(e) == FLOOR));
+    Vec4 cs/* = classification */ = numSurroundingwalls(_curr_pos), pw /* = pathway */ = numSurroundingpathways(_curr_pos);
+    int num_walls = sumVec4(cs), num_pathways = sumVec4(pw), num_explored_pathways = sumVec4(numSurroundingexplored_pathways(_curr_pos));
     
-    int num_explored_pathways =
-        ((status(n) == EXPLORED)&&pointInIndBounds(n))+
-        ((status(s) == EXPLORED)&&pointInIndBounds(s))+
-        ((status(w) == EXPLORED)&&pointInIndBounds(w))+
-        ((status(e) == EXPLORED)&&pointInIndBounds(e));
+    
+    //none of the blocked pathways are in the vector going from prevPos to currPos and prevPos!=currPos;
 
-    int
-        bn, blocked_n = bn = (classification(n) == WALL) || !pointInIndBounds(n),
-        bs, blocked_s = bs = (classification(s) == WALL) || !pointInIndBounds(s),
-        bw, blocked_w = bw = (classification(w) == WALL) || !pointInIndBounds(w),
-        be, blocked_e = be = (classification(e) == WALL) || !pointInIndBounds(e),
-        num_walls = blocked_n+blocked_s+blocked_w+blocked_e;
-    
-    
-    Point stc = ceilVec( getVec(prevLocation, _curr_pos) );
-    
-    Bool blocked_pathways_are_ahead = ((stc.y==-1)&&bs) || ((stc.y== 1) &&bn) ||
-                                      ((stc.x== 1)&&be) || ((stc.x==-1) &&bw);
-    
-    Bool hit_dead_end = num_walls == 3 && blocked_pathways_are_ahead && !cmpVec(prevLocation, _curr_pos); //none of the blocked pathways are in the vector going from prevPos to currPos and prevPos!=currPos;
+    Bool hit_dead_end = deadEnd(_curr_pos, prevLocation, cs) && !cmpVec(prevLocation, _curr_pos);
     Bool blocked_in_by_wall = num_walls == 4;
+    
+    
     //If we have explored in every direction,
     //then find the nearest unexplored postion,
     //and set it as deslocation
     if (num_explored_pathways == num_pathways) {
-        return nearestPointThatSatisfies(_curr_pos, _curr_pos, stopAtUnExplored);
         printf("SURROUNDED BY EXPLORED");
-        exit(EXIT_SUCCESS);
+        return nearestUnexplored(_curr_pos, _curr_pos);
+//        exit(EXIT_SUCCESS);
     } else if (hit_dead_end){
         printf("DEAD END");
         exit(EXIT_SUCCESS);
@@ -345,7 +392,7 @@ Point  getDesLocation(Point _curr_pos){
     
     Vec4 statuses,
     distances ,
-    lengths = collectDistancesToWalls(),
+    lengths = collectDistancesToWalls(location),
     availablities = {POINT_REACHABLE, POINT_REACHABLE, POINT_REACHABLE, POINT_REACHABLE},
     directions = {0,1,2,3};
     

@@ -8,6 +8,9 @@
 
 #include "tcpoint.h"
 #include "stdio.h"
+
+const Point _nullVec = {NULL, NULL};
+
 Point Vec(int x, int y){
     Point p; p.x = x; p.y = y;
     return p;
@@ -15,6 +18,14 @@ Point Vec(int x, int y){
 
 Point getVec(Point a, Point b){
     return subVec(a, b);
+}
+
+Point nullVec(){
+    return _nullVec;
+}
+
+Bool isnullVec(Point vec){
+    return cmpVec(vec, nullVec());
 }
 
 Point ceilVec(Point vec){

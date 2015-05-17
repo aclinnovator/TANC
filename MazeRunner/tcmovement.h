@@ -29,4 +29,11 @@ int pointsOnAxisInDirectionUntil(
                              int direction,
                              int axial_magnitude);
 
+int pointsOnAxisInDirectionUntilWithStopChecker(
+                            Point p,
+                            PointFunction checker,
+                            PointFunction mustStopChecker,
+                            int direction,
+                            int axial_magnitude,
+                            int exclusive);
 #endif /* defined(__MazeRunner__tcmovement__) */

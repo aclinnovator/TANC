@@ -11,76 +11,141 @@
             condition = "cmpVec(_curr_pos,Vec(2,2))"
             continueAfterRunningActions = "No"
             filePath = "MazeRunner/tcpathfind.cpp"
-            timestampString = "453386270.805561"
+            timestampString = "453519620.068383"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "310"
-            endingLineNumber = "310"
-            landmarkName = "getDesLocation(Point _curr_pos)"
+            startingLineNumber = "335"
+            endingLineNumber = "335"
+            landmarkName = "betterDirection(int dirA, int dirB, Point currLoc, Point desLoc)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MazeRunner/tcpathfind.cpp"
-            timestampString = "453386270.805561"
+            timestampString = "453519620.068383"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "157"
-            endingLineNumber = "157"
-            landmarkName = "nearestPointThatSatisfies(Point start, Point comingFrom, PointFunction checker)"
+            startingLineNumber = "195"
+            endingLineNumber = "195"
+            landmarkName = "nearestUnexplored(Point start, Point comingFrom)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MazeRunner/tcpathfind.cpp"
-            timestampString = "453386270.805561"
+            timestampString = "453519620.068383"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "172"
-            endingLineNumber = "172"
-            landmarkName = "nearestPointThatSatisfies(Point start, Point comingFrom, PointFunction checker)"
+            startingLineNumber = "520"
+            endingLineNumber = "520"
+            landmarkName = "pathfind_init(Point start, Point heading)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MazeRunner/tcpathfind.cpp"
-            timestampString = "453386270.805561"
+            timestampString = "453519620.068383"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "190"
-            endingLineNumber = "190"
-            landmarkName = "nearestPointThatSatisfies(Point start, Point comingFrom, PointFunction checker)"
+            startingLineNumber = "209"
+            endingLineNumber = "209"
+            landmarkName = "nearestUnexplored(Point start, Point comingFrom)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            condition = "i == 2"
+            continueAfterRunningActions = "No"
+            filePath = "MazeRunner/tcpathfind.cpp"
+            timestampString = "453519620.068383"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "201"
+            endingLineNumber = "201"
+            landmarkName = "nearestUnexplored(Point start, Point comingFrom)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MazeRunner/tcpathfind.cpp"
-            timestampString = "453386240.550051"
+            timestampString = "453519620.068383"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "349"
-            endingLineNumber = "349"
-            landmarkName = "getDesLocation(Point _curr_pos)"
+            startingLineNumber = "185"
+            endingLineNumber = "185"
+            landmarkName = "nearestUnexplored(Point start, Point comingFrom)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MazeRunner/tcpathfind.cpp"
+            timestampString = "453519620.068383"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "251"
+            endingLineNumber = "251"
+            landmarkName = "nearestUnexplored(Point start, Point comingFrom)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MazeRunner/tcpathfind.cpp"
+            timestampString = "453519620.068383"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "231"
+            endingLineNumber = "231"
+            landmarkName = "nearestUnexplored(Point start, Point comingFrom)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MazeRunner/tcpathfind.cpp"
+            timestampString = "453519620.068383"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "260"
+            endingLineNumber = "260"
+            landmarkName = "nearestUnexplored(Point start, Point comingFrom)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

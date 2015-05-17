@@ -111,6 +111,9 @@
 #define DEAD_END              3
 
 
+#define ON_QUEUE              1
+#define OFF_QUEUE             0
+
 /*--( Unexplored )------*/
 #define    UNEXPLORED_CLOSE_SHORT    1
 #define    UNEXPLORED_CLOSE_LONG     2
@@ -149,5 +152,6 @@
 #define getAxis(direction) \
 (oddOrEven(direction) == EVEN ? Y_AXIS : X_AXIS)
 
+#define sumVec4(vec) (vec[0] + vec[1] + vec[2] + vec[3])
 
 #endif

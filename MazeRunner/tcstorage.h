@@ -15,7 +15,8 @@
 //Classification: WALL, FLOOR
 typedef struct {
     unsigned short status         : 3; //Because it goes up to 3, not 2
-    unsigned short classification : 1;// WALL or FLOOR
+    unsigned short classification : 1; // WALL or FLOOR
+    unsigned short onqueue: 1;
 }MazeSquare;
 
 /*--------( Storage Functions )-------*/

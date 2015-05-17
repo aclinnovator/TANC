@@ -20,6 +20,10 @@ typedef struct {
 
 Point Vec(int x, int y);
 
+Point nullVec();
+
+Bool isnullVec(Point vec);
+
 Bool cmpVec(Point n, Point l);
 
 Point getVec(Point a, Point b);
@@ -35,6 +39,7 @@ Point multVec(Point a, Point b);
 Point perpVec(Point vec);
 
 Point absVec(Point a);
+
 
 #ifdef __APPLE__
 void printPoint(Point pt);

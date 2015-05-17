@@ -1,3 +1,4 @@
+
 //
 //  tcmovement.c
 //  MazeRunner
@@ -42,8 +43,9 @@ int pointsOnAxisInDirectionUntil(
     
     int ctr = 0;
     Point st = Vec(p.x,p.y);
-    while (pointInIndBounds(p)) {
-        if (checker(st, p)) return ctr;
+    while ( pointInIndBounds(p) ) {
+        Point trans = translateOnAxisInDirection(p, direction, axial_magnitude);
+        if ( checker(st, trans) || !pointInIndBounds(trans)) return ctr;
         p = translateOnAxisInDirection(p, direction, axial_magnitude);
         ctr++;
     }
@@ -51,23 +53,31 @@ int pointsOnAxisInDirectionUntil(
     
 }
 
-//int pointsOnAxisInDirectionUntil_Exclusive(
-//                                 Point p,
-//                                 PointFunction checker,
-//                                 PointFunction mustStopChecker,
-//                                 int direction,
-//                                 int axial_magnitude) {
-//    
-//    int ctr = 0;
-//    Point st = Vec(p.x,p.y);
-//    while (pointInIndBounds(p)) {
-//        if (mustStopChecker(st,p)) {
-//            return 0;
-//        }
-//        if (checker(st, p)) return ctr;
-//        p = translateOnAxisInDirection(p, direction, axial_magnitude);
-//        ctr++;
-//    }
-//    return 0;
-//    
-//}
+int pointsOnAxisInDirectionUntilWithStopChecker(
+                                 Point p,
+                                 PointFunction checker,
+                                 PointFunction mustStopChecker,
+                                 int direction,
+                                 int axial_magnitude,
+                                 int exclusive) {
+    
+    int ctr = 0;
+    Point st = Vec(p.x,p.y);
+    while (pointInIndBounds(p)) {
+
+        Point trans;
+        if (exclusive) {
+           trans = translateOnAxisInDirection(p, direction, axial_magnitude);
+        } else {
+            trans.x = p.x, trans.y = p.y;
+        }
+        if (mustStopChecker(st,trans)) {
+            return 0;
+        }
+        if (checker(st, trans)) return ctr;
+        p = translateOnAxisInDirection(p, direction, axial_magnitude);
+        ctr++;
+    }
+    return 0;
+    
+}

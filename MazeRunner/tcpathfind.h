@@ -56,9 +56,9 @@ Bool stopAtWall(Point start, Point current);
 Bool stopAtUnExplored(Point start, Point current);
 Bool stopAtPerpendicularPassage(Point start, Point current);
 
-Vec4 collectDistancesToUnexplored();
-Vec4 collectDistancesToWalls();
-Vec4 collectDistancesToPerpendicular();
+Vec4 collectDistancesToWalls(Point start);
+Vec4 collectDistancesToUnexplored(Point start);
+Vec4 collectDistancesToPerpendicular(Point start);
 
 int relationship(int a, int b);
 Point dirVec(int dir);
