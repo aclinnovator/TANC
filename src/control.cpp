@@ -1,6 +1,4 @@
 
-
-
 int wrap(int value, int begin, int end) {
     int normal_beg = 0, normal_end = end - begin, normal_val = value-begin;
     int overflow = abs(normal_beg - normal_end)/normal_val;
@@ -102,7 +100,11 @@ void forward(int inches){
   bridge.update();
 }
 
-void move(){
+void carInit(){
+  pathfind_init(START_PT, END_PT);
+}
 
+void carUpdate(){
+  Vec4f measurements = getUltrasonicReadings();
 
 }

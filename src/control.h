@@ -13,7 +13,7 @@
  */
 
 #include "HBridge.h"
-#include "tcpathfind.h"
+#include "TCPathfind/tcpathfind.h"
 
 
 #define MTR_AA 2 //2 on hbridge
@@ -35,6 +35,8 @@
 #define TIME_FOR_ANGLE(n) (n*TURN_TIME_ANGLE)
 
 
+#define START_PT Vec(0,0)
+#define END_PT Vec(5,5)
 
 HBridge bridge(MTR_AA, MTR_AB, MTR_BA, MTR_BB);
 
