@@ -233,9 +233,9 @@ Point nearestUnexplored(Point start, Point comingFrom) {
             int direction = directions[i];
             if (points_available[direction]==POINT_REACHABLE) {
                 
-                Point vec = ceilVec( getVec(comingFrom, start));
-                Point perp_vec = perpVec(vec);
                 Point translated = translateOnAxisInDirection(start, direction, toPerp[direction]);
+                Point vec = getVec(start, translated);
+                Point perp_vec = perpVec(vec);
 
                 //if the perp is fruitful, return that location.
                 //If it is not fruitful, then call this function a second time.
@@ -334,17 +334,18 @@ int betterDirection(int dirA, int dirB, Point currLoc, Point desLoc){
     return dirA;
 }
 
-int comparePathOptions(int n_explored, int n_closeness, int n_length,
-                 int b_explored, int b_closeness, int b_length){
+int comparePathOptions(int n_explored, int n_closeness, int n_paths_same, int n_length,
+                 int b_explored, int b_closeness, int b_paths_same, int b_length){
 
-    int objs[][3] = {
-        {n_explored, n_closeness, n_length},
-        {b_explored, b_closeness, b_length}
+    int objs[][4] = {
+        {n_explored, n_closeness, n_paths_same, n_length},
+        {b_explored, b_closeness,b_paths_same, b_length}
     };
 
-    for (int i = 0; i < 3; i++){
-        int rel = relationship(objs[1][i],objs[0][i]);
-        if (rel!= EQUAL ) return rel;
+    for (int i = 0; i < 4; i++){
+        int rel = relationship(objs[0][i],objs[1][i]);
+        if (rel!= EQUAL )
+            return rel;
 
     }
     return EQUAL;
@@ -378,7 +379,7 @@ Point  getDesLocation(Point _curr_pos){
     //then find the nearest unexplored postion,
     //and set it as deslocation
     if (num_explored_pathways == num_pathways) {
-        printf("SURROUNDED BY EXPLORED");
+        printf("SURROUNDED BY EXPLORED\n");
         return nearestUnexplored(_curr_pos, _curr_pos);
 //        exit(EXIT_SUCCESS);
     } else if (hit_dead_end){
@@ -391,10 +392,12 @@ Point  getDesLocation(Point _curr_pos){
     } else {
         Vec4 statuses,
         distances ,
+        paths_same,
         lengths = collectDistancesToWalls(location),
         availablities = {POINT_REACHABLE, POINT_REACHABLE, POINT_REACHABLE, POINT_REACHABLE},
-        directions = {0,1,2,3};
+        directions = {3,2,1,0};
         
+
         //For easy access by index
         Point *pts[] = {&n, &e, &s, &w};
         
@@ -404,14 +407,31 @@ Point  getDesLocation(Point _curr_pos){
             Point direction_translated = *pts[i];
             Point heading_direction = pointToReachableSquare(direction_translated , i);
             
-            Point vec_to_end = subVec(heading_direction, headingLocation);
+            Point farthest_reach_of_path = pointToReachableSquare(translateOnAxisInDirection(location, i, lengths[i]), i);
+            Point vec_farthest_reach_of_path = getVec(farthest_reach_of_path, headingLocation);
             //if the path does not exist, then delete it - mark as DEAD_END
-            distances[i]    =  min(absv(vec_to_end.x), absv(vec_to_end.y));
-            statuses[i]     =  status(heading_direction);
+            Point vec_self_to_end = getVec(location, headingLocation), vec_self_farthest = getVec(location, farthest_reach_of_path);
+            
+            Point ceil_vec_self = ceilVec(vec_self_to_end), ceil_vec_farthest = ceilVec(vec_self_farthest);
+            
+            distances[i]   =  min(absv(vec_farthest_reach_of_path.x),absv(vec_farthest_reach_of_path.y));
+            
+            if((ceil_vec_self.x == ceil_vec_farthest.x) && (ceil_vec_self.y == ceil_vec_farthest.y)){
+                paths_same[i] = 1;
+            } else if( ((ceil_vec_self.x == ceil_vec_farthest.x) && (ceil_vec_self.y != ceil_vec_farthest.y))||
+                       ((ceil_vec_self.x != ceil_vec_farthest.x) && (ceil_vec_self.y == ceil_vec_farthest.y))
+                      ){
+                paths_same[i] = 2;
+            } else {
+                paths_same[i] = 3;
+            }
+            
+            statuses[i]     =  status(farthest_reach_of_path);
             
             if (
                 cmpVec(heading_direction, _curr_pos)      ||
                 classification(heading_direction) == WALL ||
+                status(heading_direction)== EXPLORED||
                 !pointInIndBounds(direction_translated)
                 ){
                 
@@ -423,22 +443,24 @@ Point  getDesLocation(Point _curr_pos){
         //Insertion sort the distances.
         for (int i = 1; i < 4; i++) {
             int j = i - 1;
-            while (
-                   (j >= 0) &&
-                   comparePathOptions(
-                                      statuses [ directions[i] ],
-                                      distances[ directions[i] ],
-                                      lengths  [ directions[i] ],
-                                      statuses [ directions[j] ],
-                                      distances[ directions[j] ],
-                                      lengths  [ directions[j] ]
-                                      ) == MORE_THAN
+            int temp = directions[i];
+            while ((comparePathOptions(
+                      statuses [ directions[i] ],
+                      distances[ directions[i]],
+                      paths_same[directions[i] ],
+                      lengths  [ directions[i] ],
+                    ///////////////////////////////
+                      statuses [ directions[j] ],
+                      distances[ directions[j] ],
+                      paths_same[directions[j] ],
+                      lengths  [ directions[j] ]
+                      ) == LESS_THAN) &&
+                   (j >= 0)
                    ) {
-                int temp = directions[i];
-                directions[i] = directions[j];
-                directions[j] = temp;
+                directions[j+1] = directions[j];
                 j--;
             }
+            directions[j+1] = temp;
         }
         //Get the first available endpoint
         int ind = 0;

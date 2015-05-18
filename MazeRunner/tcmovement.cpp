@@ -46,7 +46,7 @@ int pointsOnAxisInDirectionUntil(
     while ( pointInIndBounds(p) ) {
         Point trans = translateOnAxisInDirection(p, direction, axial_magnitude);
         if ( checker(st, trans) || !pointInIndBounds(trans)) return ctr;
-        p = translateOnAxisInDirection(p, direction, axial_magnitude);
+        p = trans;
         ctr++;
     }
     return 0;

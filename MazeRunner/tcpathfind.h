@@ -65,8 +65,8 @@ Point dirVec(int dir);
 int relationshipDirection(int dirA, int dirB, Point currLoc, Point desLoc);
 int betterDirection(int dirA, int dirB, Point currLoc, Point desLoc);
 
-int comparePathOptions(int n_length, int n_closeness, int n_explored,
-                 int b_length, int b_closeness, int b_explored);
+int comparePathOptions(int n_explored, int n_closenessx, int n_closenessy, int n_length,
+                       int b_explored, int b_closenessx, int b_closenessy, int b_length);
 Point  getDesLocation(Point _curr_pos);
 Point where_the_hech_should_I_go(void);
 //Right now we are assuming next location is on the same x or x

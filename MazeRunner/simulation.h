@@ -21,8 +21,8 @@ void printVec4f(Vec4f _vec){
 
 */
 
-#define START_POS Vec(2,4)
-#define HEADING Vec(0,6)
+#define START_POS Vec(3,2)
+#define HEADING Vec(1,2)
 #define X 1
 
 #define MAZE int maze[MAZE_WIDTH][MAZE_HEIGHT] = {
@@ -31,14 +31,13 @@ void printVec4f(Vec4f _vec){
 #define E }
 
 MAZE
-    _(0) 0,X,X,X,X,X,0 E,
-    _(1) 0,X,0,0,0,X,0 E,
-    _(2) 0,X,0,X,0,X,0 E,
-    _(3) 0,X,0,X,0,X,0 E,
-    _(4) 0,0,0,0,0,X,0 E,
-    _(5) 0,X,X,X,X,X,0 E,
-    _(6) 0,0,0,0,0,0,0 E
-    //   0 1 2 3 4 5 6
+    _(0) X,X,X,X,0,X,0 E,
+    _(1) 0,0,0,X,0,X,0 E,
+    _(2) 0,X,X,X,0,X,0 E,
+    _(3) 0,X,0,0,0,X,0 E,
+    _(4) 0,X,X,0,X,X,0 E,
+    _(5) 0,0,0,0,0,0,0 E,
+    //   0 1 2 3 4 5 6 7
 END
 
 /* This proves that our algorithm can solve any looping maze:

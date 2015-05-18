@@ -64,7 +64,7 @@
 //MAZE_HEIGHT, MAZE_WIDTH, and SQUARE_SIZE_INCH  -
 //If they are not already implemented, then use defaults.
 #define MAZE_HEIGHT           7
-#define MAZE_WIDTH            7
+#define MAZE_WIDTH            6
 #define SQUARE_SIZE_INCH      1
 
 
