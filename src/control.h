@@ -13,6 +13,8 @@
  */
 
 #include "HBridge.h"
+#include "tcpathfind.h"
+
 
 #define MTR_AA 2 //2 on hbridge
 #define MTR_AB 7 //7
@@ -20,7 +22,12 @@
 #define MTR_BA 3 //3
 #define MTR_BB 6 //6
 
-#define MOTOR_WRITE
+#define MOTOR_WRITE_VAL
+
+#define _MOVE_TIME_INCH
+#define INCH
+#define MOVE_TIME_INCH (MOVE_TIME_INCH/INCH)
+#define TIME_FOR_MOVE(n)(n*MOVE_TIME_INCH)
 
 #define _TURN_TIME_ANGLE
 #define ANGLE

@@ -1,3 +1,6 @@
+
+
+
 int wrap(int value, int begin, int end) {
     int normal_beg = 0, normal_end = end - begin, normal_val = value-begin;
     int overflow = abs(normal_beg - normal_end)/normal_val;
@@ -20,9 +23,13 @@ void delayForDegrees(int degrees){
   delay(TIME_FOR_ANGLE(n));
 }
 
+void delayForInches(int inches){
+  delay(TIME_FOR_MOVE(inches));
+}
+
 void setTurnLeft(int degrees){
-  bridge.write(PIN_A, MOTOR_WRITE);
-  bridge.write(PIN_B, MOTOR_WRITE);
+  bridge.write(PIN_A, MOTOR_WRITE_VAL);
+  bridge.write(PIN_B, MOTOR_WRITE_VAL);
   bridge.setDirection(PIN_A, PIN_BACKWARD);
   bridge.setDirection(PIN_B, PIN_FORWARD);
 
@@ -36,8 +43,8 @@ void setTurnLeft(int degrees){
 }
 
 void setTurnRight(int degrees){
-  bridge.write(PIN_A, MOTOR_WRITE);
-  bridge.write(PIN_B, MOTOR_WRITE);
+  bridge.write(PIN_A, MOTOR_WRITE_VAL);
+  bridge.write(PIN_B, MOTOR_WRITE_VAL);
   bridge.setDirection(PIN_A, PIN_FORWARD);
   bridge.setDirection(PIN_B, PIN_BACKWARd);
   bridge.update();
@@ -78,11 +85,21 @@ void adjustDistances(){
 }
 
 void adjustOrientation(){
-  
+
 }
 
 void forward(int inches){
+  bridge.write(PIN_A, MOTOR_WRITE_VAL);
+  bridge.write(PIN_B, MOTOR_WRITE_VAL);
+  bridge.setDirection(PIN_A, PIN_FORWARD);
+  bridge.setDirection(PIN_B, PIN_FORWARD);
+  bridge.update();
 
+  delayForInches(inches);
+
+  bridge.write(PIN_A, 0);
+  bridge.write(PIN_B, 0);
+  bridge.update();
 }
 
 void move(){
