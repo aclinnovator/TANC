@@ -82,6 +82,23 @@ Bool storeStatus(Point p, int status){
     return false;
 }
 
+Bool addToQueue(Point p){
+    p = cutToMazeBounds(p);
+    history[p.x][p.y].onqueue = 1;
+    return true;
+}
+
+Bool removeFromQueue(Point p){
+    p = cutToMazeBounds(p);
+    history[p.x][p.y].onqueue = 0;
+    return true;
+}
+
+Bool onQueue(Point p){
+    p = cutToMazeBounds(p);
+    return history[p.x][p.y].onqueue;
+}
+
 int classification(Point p) {
     p = cutToMazeBounds(p);
     return history[p.x][p.y].classification;

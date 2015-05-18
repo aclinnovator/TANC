@@ -19,8 +19,8 @@ Point nextLocation;
 //Maze endpoint
 Point headingLocation;
 
-MazeSquare hist[MAZE_WIDTH][MAZE_HEIGHT];
-
+Point maze_path[(MAZE_WIDTH)*(MAZE_HEIGHT)];
+int curr_ind;
 
 #if IS_BLOCKS
 
@@ -140,6 +140,10 @@ Bool stopAtUnExploredAndNotWall(Point start, Point current){
     return (status(start) == UNEXPLORED) && (classification(start)==FLOOR);
 }
 
+Bool stopAtOnQueue(Point start, Point current){
+    return onQueue(start);
+}
+
 Vec4 collectDistancesToWalls(Point start){
     Vec4 measurements;
     measurements[0] = pointsOnAxisInDirectionUntil(start, stopAtWall, 0, 1),
@@ -167,6 +171,17 @@ Vec4 collectDistancesToPerpendicular(Point start){
     return measurements;
 }
 
+Vec4 collectDistancesToOnQueue(Point start){
+    Vec4 measurements;
+    measurements[0] = pointsOnAxisInDirectionUntilWithStopChecker(start, stopAtOnQueue, stopAtWall, 0, 1,0),
+    measurements[1] = pointsOnAxisInDirectionUntilWithStopChecker(start, stopAtOnQueue, stopAtWall, 1, 1,0),
+    measurements[2] = pointsOnAxisInDirectionUntilWithStopChecker(start, stopAtOnQueue, stopAtWall, 2, 1,0),
+    measurements[3] = pointsOnAxisInDirectionUntilWithStopChecker(start, stopAtOnQueue, stopAtWall, 3, 1,0);
+    
+    return measurements;
+}
+
+
 
 
 Point nearestUnexplored(Point start, Point comingFrom) {
@@ -182,7 +197,7 @@ Point nearestUnexplored(Point start, Point comingFrom) {
     if (classification(start) == UNEXPLORED) return start;
     else if(deadEnd(start, comingFrom, numSurroundingwalls(start)) ||
         ((adjacent&&!same_vec)  && !same_point)   ) {
-            return Vec(NULL, NULL);
+            return nullVec();
         }
     
     Vec4 toUnexplored = collectDistancesToUnexplored(start);
@@ -248,6 +263,7 @@ Point nearestUnexplored(Point start, Point comingFrom) {
                 {
                     Point vec = nearestUnexplored(translated, start);
                     if (!isnullVec(vec)) {
+                        addToQueue(vec);
                         return vec;
                     }
                 }
@@ -257,7 +273,9 @@ Point nearestUnexplored(Point start, Point comingFrom) {
         }
         
     } else if (numfruitful>0){
-        return translateOnAxisInDirection(start, mindir, toUnexplored[mindir]);
+        Point ret = translateOnAxisInDirection(start, mindir, toUnexplored[mindir]);
+        addToQueue(ret);
+        return ret;
     }
     
     return nullVec();
@@ -469,7 +487,9 @@ Point  getDesLocation(Point _curr_pos){
             dir = directions[ind+1];
             ind++;
         }
-        return TRANS(dir);
+        Point ret = translateOnAxisInDirection(location, dir, lengths[dir]);
+        addToQueue(ret);
+        return ret;
     }
     
   
@@ -487,10 +507,21 @@ Point one_square_closer_to_next_location(Point _curr_pos, Point next_location){
 
 Point where_the_hech_should_I_go(Point whereIAmLocated){
     Point loc = whereIAmLocated;
-    Point best_loc = getDesLocation(loc);
+    getDesLocation(loc);
+    
+    Vec4 toOnQueue = collectDistancesToOnQueue(location);
+    
+    for (int i=0; i<4; i++) {
+        int dist = toOnQueue[i];
+        if(dist!=0) {
+            Point on_queue = translateOnAxisInDirection(location, i, dist);
+            removeFromQueue(on_queue);
+            return on_queue;
+        }
+    }
     
 //    Point to_go = pointToReachableSquare( translateOnAxisInDirection(location, best_dir, 1), best_dir );
-    return best_loc;
+    return nullVec();
 }
 
 

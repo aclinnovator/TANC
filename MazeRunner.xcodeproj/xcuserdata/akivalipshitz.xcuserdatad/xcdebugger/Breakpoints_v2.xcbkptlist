@@ -11,12 +11,12 @@
             condition = "cmpVec(_curr_pos,Vec(2,2))"
             continueAfterRunningActions = "No"
             filePath = "MazeRunner/tcpathfind.cpp"
-            timestampString = "453612358.376806"
+            timestampString = "453680098.521246"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "335"
-            endingLineNumber = "335"
-            landmarkName = "betterDirection(int dirA, int dirB, Point currLoc, Point desLoc)"
+            startingLineNumber = "338"
+            endingLineNumber = "338"
+            landmarkName = "comparePathOptions(int n_explored, int n_closeness, int n_paths_same, int n_length, int b_explored, int b_closeness, int b_paths_same, int b_length)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -43,11 +43,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MazeRunner/tcpathfind.cpp"
-            timestampString = "453674288.50615"
+            timestampString = "453680098.521246"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "542"
-            endingLineNumber = "542"
+            startingLineNumber = "547"
+            endingLineNumber = "547"
             landmarkName = "pathfind_init(Point start, Point heading)"
             landmarkType = "7">
          </BreakpointContent>
@@ -125,11 +125,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MazeRunner/tcpathfind.cpp"
-            timestampString = "453612358.376806"
+            timestampString = "453680098.521246"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "260"
-            endingLineNumber = "260"
+            startingLineNumber = "263"
+            endingLineNumber = "263"
             landmarkName = "nearestUnexplored(Point start, Point comingFrom)"
             landmarkType = "7">
          </BreakpointContent>
@@ -142,11 +142,11 @@
             condition = "cmpVec(_curr_pos, Vec(5,1))"
             continueAfterRunningActions = "No"
             filePath = "MazeRunner/tcpathfind.cpp"
-            timestampString = "453669952.989002"
+            timestampString = "453680098.521246"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "361"
-            endingLineNumber = "361"
+            startingLineNumber = "364"
+            endingLineNumber = "364"
             landmarkName = "getDesLocation(Point _curr_pos)"
             landmarkType = "7">
          </BreakpointContent>
@@ -158,11 +158,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MazeRunner/tcpathfind.cpp"
-            timestampString = "453669952.388105"
+            timestampString = "453680098.521246"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "348"
-            endingLineNumber = "348"
+            startingLineNumber = "351"
+            endingLineNumber = "351"
             landmarkName = "comparePathOptions(int n_explored, int n_closeness, int n_paths_same, int n_length, int b_explored, int b_closeness, int b_paths_same, int b_length)"
             landmarkType = "7">
          </BreakpointContent>
@@ -175,11 +175,11 @@
             condition = "cmpVec(location, Vec(5,3))"
             continueAfterRunningActions = "No"
             filePath = "MazeRunner/tcpathfind.cpp"
-            timestampString = "453672975.163651"
+            timestampString = "453680098.521246"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "404"
-            endingLineNumber = "404"
+            startingLineNumber = "407"
+            endingLineNumber = "407"
             landmarkName = "getDesLocation(Point _curr_pos)"
             landmarkType = "7">
          </BreakpointContent>
@@ -191,11 +191,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MazeRunner/tcpathfind.cpp"
-            timestampString = "453674288.50615"
+            timestampString = "453680098.521246"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "442"
-            endingLineNumber = "442"
+            startingLineNumber = "445"
+            endingLineNumber = "445"
             landmarkName = "getDesLocation(Point _curr_pos)"
             landmarkType = "7">
          </BreakpointContent>
@@ -207,11 +207,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MazeRunner/tcpathfind.cpp"
-            timestampString = "453674351.514566"
+            timestampString = "453680098.521246"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "465"
-            endingLineNumber = "465"
+            startingLineNumber = "468"
+            endingLineNumber = "468"
             landmarkName = "getDesLocation(Point _curr_pos)"
             landmarkType = "7">
          </BreakpointContent>
@@ -223,11 +223,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MazeRunner/tcpathfind.cpp"
-            timestampString = "453673248.884259"
+            timestampString = "453680098.521246"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "420"
-            endingLineNumber = "420"
+            startingLineNumber = "423"
+            endingLineNumber = "423"
             landmarkName = "getDesLocation(Point _curr_pos)"
             landmarkType = "7">
          </BreakpointContent>

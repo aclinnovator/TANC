@@ -8,8 +8,9 @@
 
 #include "tcpoint.h"
 #include "stdio.h"
+#include "tcconstants.h"
 
-const Point _nullVec = {NULL, NULL};
+const Point _nullVec = {MAZE_WIDTH*2, MAZE_WIDTH*2};
 
 Point Vec(int x, int y){
     Point p; p.x = x; p.y = y;

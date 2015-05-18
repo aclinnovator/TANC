@@ -26,11 +26,16 @@ void storeClassificationFloor(Point p);
 Bool storeClassification(Point p, int classification);
 Bool storeStatus(Point p, int status);
 
+Bool addToQueue(Point p);
+    Bool removeFromQueue(Point p);
+
 void save(Point currPos, Vec4 ultraSonicData);
 
 /*-------( Retrieval )-------*/
 int classification(Point p);
 int status(Point p);
+
+Bool onQueue(Point p);
 
 
 #endif /* defined(__MazeRunner__tcstorage__) */
