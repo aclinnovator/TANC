@@ -134,7 +134,15 @@ Vec4f collectMeasurements(){
             }
         }
     }
+    /*
+    printf("Measurements\n");
+    printf(" %d \n",(int)measurements[0]);
+    printf("%d %d\n",(int)measurements[3], (int)measurements[1]);
+    printf(" %d",(int)measurements[2]);
     
+    
+    printf("\n------\n");
+    */
     return measurements;
 }
 
