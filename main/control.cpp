@@ -1,8 +1,5 @@
 #include "Arduino.h"
 #include "control.h"
-HBridge bridge(MTR_AA, MTR_AB, MTR_BA, MTR_BB);
-int currAngle;
-
 int wrap(int value, int _begin, int _end) {
     int normal_beg = 0, normal_end = _end - _begin, normal_val = value-_begin;
     int _overflow = abs(normal_beg - normal_end)/normal_val;

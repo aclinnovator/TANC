@@ -19,10 +19,14 @@
 
 
 
-#ifdef __APPLE__
+#ifdef __APPLE__ 
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#endif
+
+#ifndef __APPLE__
+#include <Arduino.h>
 #endif
 
 #include "tcpoint.h"

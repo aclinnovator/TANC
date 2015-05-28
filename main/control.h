@@ -39,8 +39,10 @@
 #define START_PT Vec(0,0)
 #define END_PT Vec(5,5)
 
+HBridge bridge(MTR_AA, MTR_AB, MTR_BA, MTR_BB);
 
 
+int currAngle;
 
 void setTurnLeft(int degrees);
 void setTurnRight(int degrees);
